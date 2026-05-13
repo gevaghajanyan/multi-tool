@@ -9,13 +9,22 @@ const links = [
   { href: "/base64", label: "Base64" },
   { href: "/jwt", label: "JWT" },
   { href: "/regex", label: "Regex" },
+  { href: "/url", label: "URL" },
+  { href: "/csv", label: "CSV" },
+  { href: "/color", label: "Color" },
+  { href: "/hash", label: "Hash" },
+  { href: "/timestamp", label: "Timestamp" },
+  { href: "/base", label: "Base" },
+  { href: "/diff", label: "Diff" },
+  { href: "/cron", label: "Cron" },
+  { href: "/html", label: "HTML" },
 ];
 
 export function Nav() {
   const pathname = usePathname();
   return (
     <nav className="border-b border-zinc-800 bg-zinc-950 px-4">
-      <div className="mx-auto flex h-12 max-w-5xl items-center gap-6">
+      <div className="mx-auto flex h-12 max-w-7xl items-center gap-5 overflow-x-auto scrollbar-none">
         {links.map(({ href, label }) => (
           <Link
             key={href}
