@@ -41,6 +41,7 @@ export const TOOL_GROUPS: ToolGroup[] = [
       { href: "/timestamp", label: "Timestamp" },
       { href: "/base", label: "Base Converter" },
       { href: "/color", label: "Color Converter" },
+      { href: "/size", label: "Size Converter" },
     ],
   },
   {
