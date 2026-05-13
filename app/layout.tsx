@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Nav } from "@/src/components/Nav";
+import { SettingsProvider } from "@/src/context/SettingsContext";
+import { AccentStyler } from "@/src/components/AccentStyler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "File Converter",
-  description: "Convert video, audio, and images entirely in your browser.",
+  title: "Dev Tools",
+  description: "A collection of browser-based developer utilities.",
 };
 
 export default function RootLayout({
@@ -28,12 +30,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body
-        className="min-h-full bg-zinc-950 text-zinc-100"
-        suppressHydrationWarning
-      >
-        <Nav />
-        {children}
+      <body className="min-h-full bg-zinc-950 text-zinc-100" suppressHydrationWarning>
+        <SettingsProvider>
+          <AccentStyler />
+          <Nav />
+          {children}
+        </SettingsProvider>
       </body>
     </html>
   );
