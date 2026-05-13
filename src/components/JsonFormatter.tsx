@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { diffLines } from "diff";
+import type { Change } from "diff";
 import { JsonTree } from "./JsonTree";
 
 type ParseResult =
@@ -29,81 +31,6 @@ function parseJsonLax(input: string): ParseResult {
   }
 }
 
-type DiffEntry = {
-  path: string;
-  type: "added" | "removed" | "changed";
-  left?: string;
-  right?: string;
-};
-
-function truncate(s: string, max = 100): string {
-  return s.length > max ? s.slice(0, max) + "…" : s;
-}
-
-function diffJson(left: unknown, right: unknown, path = "$"): DiffEntry[] {
-  const entries: DiffEntry[] = [];
-
-  const leftIsArray = Array.isArray(left);
-  const rightIsArray = Array.isArray(right);
-  const leftIsNull = left === null;
-  const rightIsNull = right === null;
-  const leftType = leftIsNull ? "null" : leftIsArray ? "array" : typeof left;
-  const rightType = rightIsNull ? "null" : rightIsArray ? "array" : typeof right;
-
-  if (leftType !== rightType) {
-    entries.push({
-      path,
-      type: "changed",
-      left: truncate(JSON.stringify(left)),
-      right: truncate(JSON.stringify(right)),
-    });
-    return entries;
-  }
-
-  if (leftIsArray && rightIsArray) {
-    const len = Math.max((left as unknown[]).length, (right as unknown[]).length);
-    for (let i = 0; i < len; i++) {
-      const l = left as unknown[];
-      const r = right as unknown[];
-      if (i >= l.length) {
-        entries.push({ path: `${path}[${i}]`, type: "added", right: truncate(JSON.stringify(r[i])) });
-      } else if (i >= r.length) {
-        entries.push({ path: `${path}[${i}]`, type: "removed", left: truncate(JSON.stringify(l[i])) });
-      } else {
-        entries.push(...diffJson(l[i], r[i], `${path}[${i}]`));
-      }
-    }
-    return entries;
-  }
-
-  if (leftType === "object" && !leftIsNull) {
-    const l = left as Record<string, unknown>;
-    const r = right as Record<string, unknown>;
-    const keys = new Set([...Object.keys(l), ...Object.keys(r)]);
-    for (const key of keys) {
-      const childPath = `${path}.${key}`;
-      if (!(key in l)) {
-        entries.push({ path: childPath, type: "added", right: truncate(JSON.stringify(r[key])) });
-      } else if (!(key in r)) {
-        entries.push({ path: childPath, type: "removed", left: truncate(JSON.stringify(l[key])) });
-      } else {
-        entries.push(...diffJson(l[key], r[key], childPath));
-      }
-    }
-    return entries;
-  }
-
-  if (left !== right) {
-    entries.push({
-      path,
-      type: "changed",
-      left: truncate(String(left)),
-      right: truncate(String(right)),
-    });
-  }
-  return entries;
-}
-
 type Mode = "format" | "diff";
 
 export function JsonFormatter() {
@@ -121,7 +48,8 @@ export function JsonFormatter() {
   // Diff mode
   const [leftInput, setLeftInput] = useState("");
   const [rightInput, setRightInput] = useState("");
-  const [diffEntries, setDiffEntries] = useState<DiffEntry[] | null>(null);
+  const [diffChanges, setDiffChanges] = useState<Change[] | null>(null);
+  const [diffMaximized, setDiffMaximized] = useState(false);
   const [leftError, setLeftError] = useState("");
   const [rightError, setRightError] = useState("");
 
@@ -176,10 +104,12 @@ export function JsonFormatter() {
     setLeftError(!lr.ok ? lr.error : "");
     setRightError(!rr.ok ? rr.error : "");
     if (!lr.ok || !rr.ok) {
-      setDiffEntries(null);
+      setDiffChanges(null);
       return;
     }
-    setDiffEntries(diffJson(lr.value, rr.value));
+    const leftFmt = JSON.stringify(lr.value, null, 2);
+    const rightFmt = JSON.stringify(rr.value, null, 2);
+    setDiffChanges(diffLines(leftFmt, rightFmt));
   }
 
   const modeLabels: Record<Mode, string> = { format: "Formatter", diff: "Diff Checker" };
@@ -411,7 +341,7 @@ export function JsonFormatter() {
                 value={leftInput}
                 onChange={(e) => {
                   setLeftInput(e.target.value);
-                  setDiffEntries(null);
+                  setDiffChanges(null);
                 }}
                 placeholder="Original JSON…"
                 spellCheck={false}
@@ -449,7 +379,7 @@ export function JsonFormatter() {
                 value={rightInput}
                 onChange={(e) => {
                   setRightInput(e.target.value);
-                  setDiffEntries(null);
+                  setDiffChanges(null);
                 }}
                 placeholder="Modified JSON…"
                 spellCheck={false}
@@ -470,54 +400,130 @@ export function JsonFormatter() {
             Compare
           </button>
 
-          {diffEntries !== null && (
-            <div className="flex flex-col gap-2">
-              <p className="text-sm font-medium text-zinc-300">
-                {diffEntries.length === 0
-                  ? "No differences found"
-                  : `${diffEntries.length} difference${diffEntries.length === 1 ? "" : "s"} found`}
-              </p>
-              {diffEntries.length === 0 ? (
+          {diffChanges !== null && (() => {
+            const isIdentical = diffChanges.every((c) => !c.added && !c.removed);
+            const addedCount = diffChanges.reduce((n, c) => n + (c.added ? (c.count ?? 0) : 0), 0);
+            const removedCount = diffChanges.reduce((n, c) => n + (c.removed ? (c.count ?? 0) : 0), 0);
+
+            if (isIdentical) {
+              return (
                 <div className="rounded-xl border border-amber-400/30 bg-amber-400/5 px-4 py-3 text-sm text-amber-400">
                   The two JSON values are identical.
                 </div>
-              ) : (
-                <div className="flex max-h-96 flex-col gap-1 overflow-auto rounded-xl border border-zinc-700 bg-zinc-950 p-3">
-                  {diffEntries.map((entry, i) => (
-                    <div
-                      key={i}
-                      className={`rounded-lg px-3 py-2 font-mono text-xs ${
-                        entry.type === "added"
-                          ? "bg-green-500/10 text-green-300"
-                          : entry.type === "removed"
-                            ? "bg-red-500/10 text-red-300"
-                            : "bg-amber-500/10 text-amber-300"
+              );
+            }
+
+            // Build flat row list with line numbers
+            type Row = { id: string; ln: number | null; rn: number | null; type: "add" | "del" | "ctx"; text: string };
+            let lLine = 1, rLine = 1;
+            const rows: Row[] = [];
+            for (const [ci, change] of diffChanges.entries()) {
+              const lines = change.value.endsWith("\n")
+                ? change.value.slice(0, -1).split("\n")
+                : change.value.split("\n");
+              for (const [li, text] of lines.entries()) {
+                if (change.removed) {
+                  rows.push({ id: `${ci}-${li}`, ln: lLine++, rn: null, type: "del", text });
+                } else if (change.added) {
+                  rows.push({ id: `${ci}-${li}`, ln: null, rn: rLine++, type: "add", text });
+                } else {
+                  rows.push({ id: `${ci}-${li}`, ln: lLine++, rn: rLine++, type: "ctx", text });
+                }
+              }
+            }
+
+            const diffTable = (
+              <div className="font-mono text-xs leading-5">
+                {rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className={`flex ${
+                      row.type === "add"
+                        ? "bg-green-500/10"
+                        : row.type === "del"
+                          ? "bg-red-500/10"
+                          : ""
+                    }`}
+                  >
+                    <span className="w-10 shrink-0 select-none border-r border-zinc-800 py-0.5 pr-2 text-right text-zinc-700">
+                      {row.ln ?? ""}
+                    </span>
+                    <span className="w-10 shrink-0 select-none border-r border-zinc-800 py-0.5 pr-2 text-right text-zinc-700">
+                      {row.rn ?? ""}
+                    </span>
+                    <span
+                      className={`w-5 shrink-0 select-none py-0.5 text-center ${
+                        row.type === "add"
+                          ? "text-green-500"
+                          : row.type === "del"
+                            ? "text-red-500"
+                            : "text-zinc-700"
                       }`}
                     >
-                      <span className="font-semibold">{entry.path}</span>
-                      {entry.type === "added" && (
-                        <span className="ml-2 text-zinc-400">
-                          added: {entry.right}
-                        </span>
-                      )}
-                      {entry.type === "removed" && (
-                        <span className="ml-2 text-zinc-400">
-                          removed: {entry.left}
-                        </span>
-                      )}
-                      {entry.type === "changed" && (
-                        <span className="ml-2 text-zinc-400">
-                          {entry.left}{" "}
-                          <span className="text-zinc-500">→</span>{" "}
-                          {entry.right}
-                        </span>
-                      )}
+                      {row.type === "add" ? "+" : row.type === "del" ? "−" : " "}
+                    </span>
+                    <span
+                      className={`flex-1 overflow-hidden py-0.5 pl-2 ${
+                        row.type === "add"
+                          ? "text-green-200"
+                          : row.type === "del"
+                            ? "text-red-200"
+                            : "text-zinc-500"
+                      }`}
+                    >
+                      {row.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            );
+
+            return (
+              <>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-zinc-300">Differences</span>
+                    <span className="text-xs font-medium text-green-400">+{addedCount} added</span>
+                    <span className="text-xs font-medium text-red-400">−{removedCount} removed</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setDiffMaximized(true)}
+                    className="rounded-lg border border-zinc-700 px-3 py-1 text-xs text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+                  >
+                    Expand
+                  </button>
+                </div>
+                <div className="max-h-[480px] overflow-auto rounded-xl border border-zinc-700 bg-zinc-950">
+                  {diffTable}
+                </div>
+              </div>
+
+              {diffMaximized && (
+                <div className="fixed inset-0 z-50 flex flex-col bg-zinc-950 p-4 sm:p-6">
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-medium text-zinc-300">Differences</span>
+                      <span className="text-xs font-medium text-green-400">+{addedCount} added</span>
+                      <span className="text-xs font-medium text-red-400">−{removedCount} removed</span>
                     </div>
-                  ))}
+                    <button
+                      type="button"
+                      onClick={() => setDiffMaximized(false)}
+                      className="rounded-lg border border-zinc-700 px-3 py-1 text-xs text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+                    >
+                      ✕ Close
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-auto rounded-xl border border-zinc-700 bg-zinc-900">
+                    {diffTable}
+                  </div>
                 </div>
               )}
-            </div>
-          )}
+              </>
+            );
+          })()}
         </div>
       )}
 
