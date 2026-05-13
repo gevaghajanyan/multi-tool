@@ -7,6 +7,7 @@ import { FileInfo } from "./FileInfo";
 import { FormatGrid } from "./FormatGrid";
 import { ConvertButton } from "./ConvertButton";
 import { ProgressPanel } from "./ProgressPanel";
+import { QualitySlider } from "./QualitySlider";
 import { useFFmpeg } from "@/src/hooks/useFFmpeg";
 import { useConverter } from "@/src/hooks/useConverter";
 import type { ConverterType } from "@/src/types/converter";
@@ -15,8 +16,10 @@ import { FORMATS } from "@/src/utils/formats";
 export function Converter() {
   const [type, setType] = useState<ConverterType>("video");
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [quality, setQuality] = useState(80);
+  const [lastCompressedQuality, setLastCompressedQuality] = useState<number | null>(null);
   const { loaded: ffmpegLoaded, error: ffmpegError, ffmpegRef } = useFFmpeg();
-  const { jobs, processing, addFiles, removeFile, reset, convertAll } =
+  const { jobs, processing, addFiles, removeFile, reset, recompressAll, convertAll } =
     useConverter({ type, ffmpegRef, ffmpegLoaded });
 
   const inputFormats = useMemo(
@@ -27,7 +30,7 @@ export function Converter() {
   const outputFormat = useMemo(() => {
     if (!selectedFormat) return null;
     if (!FORMATS[type].output.includes(selectedFormat)) return null;
-    if (inputFormats.includes(selectedFormat)) return null;
+    if (type !== "compress" && inputFormats.includes(selectedFormat)) return null;
     return selectedFormat;
   }, [selectedFormat, type, inputFormats]);
 
@@ -44,11 +47,11 @@ export function Converter() {
     setSelectedFormat(null);
   };
 
-  const needsFFmpeg = type !== "image";
+  const needsFFmpeg = type !== "image" && type !== "compress";
   const ffmpegLoading = needsFFmpeg && !ffmpegLoaded && !ffmpegError;
 
   const convertibleCount = jobs.filter(
-    (j) => j.status !== "done" && outputFormat && j.inputFormat !== outputFormat,
+    (j) => j.status !== "done" && outputFormat && (type === "compress" || j.inputFormat !== outputFormat),
   ).length;
 
   const canConvert =
@@ -140,9 +143,17 @@ export function Converter() {
         {jobs.length > 0 && (
           <FormatGrid
             type={type}
-            disabledFormats={inputFormats}
+            disabledFormats={type === "compress" ? [] : inputFormats}
             selected={outputFormat}
             onSelect={setSelectedFormat}
+            disabled={processing}
+          />
+        )}
+
+        {jobs.length > 0 && type === "compress" && (
+          <QualitySlider
+            quality={quality}
+            onChange={setQuality}
             disabled={processing}
           />
         )}
@@ -163,30 +174,53 @@ export function Converter() {
         {allDone ? (
           <div className="rounded-xl border border-amber-400/40 bg-amber-400/5 p-4">
             <p className="text-sm font-semibold text-amber-400">
-              All {jobs.length} file{jobs.length === 1 ? "" : "s"} converted
+              All {jobs.length} file{jobs.length === 1 ? "" : "s"}{" "}
+              {type === "compress" ? "compressed" : "converted"}
             </p>
             <p className="mt-1 text-xs text-zinc-400">
               Use the Download button on each file above to save the result.
             </p>
-            <button
-              type="button"
-              onClick={handleClearAll}
-              className="mt-3 inline-flex items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors duration-150 hover:border-zinc-700 hover:text-zinc-100"
-            >
-              Convert more files
-            </button>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {type === "compress" && (
+                <button
+                  type="button"
+                  disabled={quality === lastCompressedQuality}
+                  onClick={() => {
+                    if (!outputFormat) return;
+                    setLastCompressedQuality(quality);
+                    recompressAll(outputFormat, quality);
+                  }}
+                  className="inline-flex items-center justify-center rounded-lg border border-amber-400/40 bg-amber-400/10 px-4 py-2 text-sm font-medium text-amber-400 transition-colors duration-150 hover:bg-amber-400/20 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Recompress
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={handleClearAll}
+                className="inline-flex items-center justify-center rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-300 transition-colors duration-150 hover:border-zinc-700 hover:text-zinc-100"
+              >
+                {type === "compress" ? "Compress new files" : "Convert more files"}
+              </button>
+            </div>
           </div>
         ) : (
           jobs.length > 0 && (
             <ConvertButton
               disabled={!canConvert}
               busy={processing}
-              onClick={() => outputFormat && convertAll(outputFormat)}
+              onClick={() => {
+                if (!outputFormat) return;
+                if (type === "compress") setLastCompressedQuality(quality);
+                convertAll(outputFormat, type === "compress" ? quality : undefined);
+              }}
               label={
                 ffmpegLoading
                   ? "Loading FFmpeg…"
                   : outputFormat
-                    ? `Convert ${convertibleCount} file${convertibleCount === 1 ? "" : "s"} to ${outputFormat.toUpperCase()}`
+                    ? type === "compress"
+                      ? `Compress ${convertibleCount} file${convertibleCount === 1 ? "" : "s"} to ${outputFormat.toUpperCase()} at ${quality}%`
+                      : `Convert ${convertibleCount} file${convertibleCount === 1 ? "" : "s"} to ${outputFormat.toUpperCase()}`
                     : "Pick an output format"
               }
             />

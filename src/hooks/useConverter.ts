@@ -95,7 +95,7 @@ export function useConverter({
   }, []);
 
   const convertImageJob = useCallback(
-    async (job: ConvertJob, outputFormat: string) => {
+    async (job: ConvertJob, outputFormat: string, quality = 92) => {
       const bitmap = await createImageBitmap(job.file);
       const canvas = document.createElement("canvas");
       canvas.width = bitmap.width;
@@ -107,7 +107,7 @@ export function useConverter({
       const mime = IMAGE_MIME[outputFormat];
       if (!mime) throw new Error(`Unsupported image output: ${outputFormat}`);
       const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob((b) => resolve(b), mime, 0.92),
+        canvas.toBlob((b) => resolve(b), mime, quality / 100),
       );
       if (!blob) throw new Error("Image encoding failed");
       const url = URL.createObjectURL(blob);
@@ -121,6 +121,46 @@ export function useConverter({
       });
     },
     [updateJob],
+  );
+
+  const recompressAll = useCallback(
+    async (outputFormat: string, quality: number) => {
+      if (processing) return;
+
+      for (const job of jobs) {
+        if (job.outputUrl) {
+          URL.revokeObjectURL(job.outputUrl);
+          urlsRef.current.delete(job.outputUrl);
+        }
+      }
+
+      cancelledRef.current = false;
+      setProcessing(true);
+
+      for (const job of jobs) {
+        if (cancelledRef.current) break;
+        updateJob(job.id, {
+          status: "converting",
+          progress: 0,
+          logLines: [],
+          error: undefined,
+          outputUrl: undefined,
+          outputSize: undefined,
+          outputFormat: undefined,
+        });
+        try {
+          await convertImageJob(job, outputFormat, quality);
+        } catch (err) {
+          updateJob(job.id, {
+            status: "error",
+            error: err instanceof Error ? err.message : String(err),
+          });
+        }
+      }
+
+      setProcessing(false);
+    },
+    [processing, jobs, updateJob, convertImageJob],
   );
 
   const convertMediaJob = useCallback(
@@ -187,15 +227,16 @@ export function useConverter({
   );
 
   const convertAll = useCallback(
-    async (outputFormat: string) => {
+    async (outputFormat: string, quality?: number) => {
       if (processing) return;
-      if (type !== "image" && !ffmpegLoaded) return;
+      const isCanvasBased = type === "image" || type === "compress";
+      if (!isCanvasBased && !ffmpegLoaded) return;
 
       cancelledRef.current = false;
       setProcessing(true);
 
       const pending = jobs.filter(
-        (j) => j.status !== "done" && j.inputFormat !== outputFormat,
+        (j) => j.status !== "done" && (type === "compress" || j.inputFormat !== outputFormat),
       );
 
       for (const job of pending) {
@@ -210,8 +251,8 @@ export function useConverter({
           outputFormat: undefined,
         });
         try {
-          if (type === "image") {
-            await convertImageJob(job, outputFormat);
+          if (isCanvasBased) {
+            await convertImageJob(job, outputFormat, quality);
           } else {
             await convertMediaJob(job, outputFormat);
           }
@@ -236,5 +277,5 @@ export function useConverter({
     ],
   );
 
-  return { jobs, processing, addFiles, removeFile, reset, convertAll };
+  return { jobs, processing, addFiles, removeFile, reset, recompressAll, convertAll };
 }

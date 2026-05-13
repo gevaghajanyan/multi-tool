@@ -1,4 +1,4 @@
-export type ConverterType = "video" | "audio" | "image";
+export type ConverterType = "video" | "audio" | "image" | "compress";
 
 export type JobStatus =
   | "queued"

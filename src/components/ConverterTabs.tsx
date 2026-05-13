@@ -6,6 +6,7 @@ const TABS: { key: ConverterType; label: string }[] = [
   { key: "video", label: "Video" },
   { key: "audio", label: "Audio" },
   { key: "image", label: "Image" },
+  { key: "compress", label: "Compress" },
 ];
 
 interface Props {

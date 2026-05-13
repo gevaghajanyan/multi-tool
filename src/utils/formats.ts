@@ -16,6 +16,10 @@ export const FORMATS: Record<
     input: ["jpg", "png", "webp", "gif", "bmp", "tiff"],
     output: ["jpg", "png", "webp", "gif", "bmp"],
   },
+  compress: {
+    input: ["jpg", "png", "webp", "gif", "bmp", "tiff"],
+    output: ["jpg", "png", "webp"],
+  },
 };
 
 export const IMAGE_MIME: Record<string, string> = {
