@@ -8,6 +8,7 @@ const links = [
   { href: "/json", label: "JSON Tools" },
   { href: "/base64", label: "Base64" },
   { href: "/jwt", label: "JWT" },
+  { href: "/regex", label: "Regex" },
 ];
 
 export function Nav() {
