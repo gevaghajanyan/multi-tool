@@ -6,6 +6,8 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/", label: "File Converter" },
   { href: "/json", label: "JSON Tools" },
+  { href: "/base64", label: "Base64" },
+  { href: "/jwt", label: "JWT" },
 ];
 
 export function Nav() {

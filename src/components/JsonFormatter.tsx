@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { diffLines } from "diff";
 import type { Change } from "diff";
+import { load as yamlLoad, dump as yamlDump } from "js-yaml";
 import { JsonTree } from "./JsonTree";
 
 type ParseResult =
@@ -31,7 +32,8 @@ function parseJsonLax(input: string): ParseResult {
   }
 }
 
-type Mode = "format" | "diff";
+type Mode = "format" | "diff" | "yaml";
+type YamlDirection = "json-to-yaml" | "yaml-to-json";
 
 export function JsonFormatter() {
   const [mode, setMode] = useState<Mode>("format");
@@ -50,6 +52,13 @@ export function JsonFormatter() {
   const [rightInput, setRightInput] = useState("");
   const [diffChanges, setDiffChanges] = useState<Change[] | null>(null);
   const [diffMaximized, setDiffMaximized] = useState(false);
+
+  // YAML mode
+  const [yamlDirection, setYamlDirection] = useState<YamlDirection>("json-to-yaml");
+  const [yamlInput, setYamlInput] = useState("");
+  const [yamlOutput, setYamlOutput] = useState("");
+  const [yamlError, setYamlError] = useState("");
+  const [yamlCopied, setYamlCopied] = useState(false);
   const [leftError, setLeftError] = useState("");
   const [rightError, setRightError] = useState("");
 
@@ -112,7 +121,42 @@ export function JsonFormatter() {
     setDiffChanges(diffLines(leftFmt, rightFmt));
   }
 
-  const modeLabels: Record<Mode, string> = { format: "Formatter", diff: "Diff Checker" };
+  function handleYamlConvert() {
+    try {
+      if (yamlDirection === "json-to-yaml") {
+        const result = parseJsonLax(yamlInput);
+        if (!result.ok) throw new Error(result.error);
+        setYamlOutput(yamlDump(result.value, { indent: 2 }));
+      } else {
+        const parsed = yamlLoad(yamlInput);
+        setYamlOutput(JSON.stringify(parsed, null, 2));
+      }
+      setYamlError("");
+    } catch (e) {
+      setYamlError(e instanceof Error ? e.message : String(e));
+      setYamlOutput("");
+    }
+  }
+
+  async function handleYamlCopy() {
+    await navigator.clipboard.writeText(yamlOutput);
+    setYamlCopied(true);
+    setTimeout(() => setYamlCopied(false), 1500);
+  }
+
+  function handleYamlDownload() {
+    const ext = yamlDirection === "json-to-yaml" ? "yaml" : "json";
+    const mime = yamlDirection === "json-to-yaml" ? "text/yaml" : "application/json";
+    const blob = new Blob([yamlOutput], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `converted.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const modeLabels: Record<Mode, string> = { format: "Formatter", diff: "Diff Checker", yaml: "YAML" };
 
   return (
     <div className="w-full max-w-4xl">
@@ -308,6 +352,75 @@ export function JsonFormatter() {
                   <JsonTree value={parsedValue} />
                 )}
               </div>
+            </div>
+          )}
+        </div>
+      ) : mode === "yaml" ? (
+        <div className="flex flex-col gap-5 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 shadow-xl">
+          <div className="flex w-fit gap-1 rounded-xl border border-zinc-800 bg-zinc-900 p-1">
+            {(["json-to-yaml", "yaml-to-json"] as YamlDirection[]).map((d) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => { setYamlDirection(d); setYamlOutput(""); setYamlError(""); }}
+                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                  yamlDirection === d ? "bg-zinc-700 text-zinc-100" : "text-zinc-500 hover:text-zinc-300"
+                }`}
+              >
+                {d === "json-to-yaml" ? "JSON → YAML" : "YAML → JSON"}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <span className="text-sm font-medium text-zinc-300">
+              {yamlDirection === "json-to-yaml" ? "JSON input" : "YAML input"}
+            </span>
+            <textarea
+              value={yamlInput}
+              onChange={(e) => { setYamlInput(e.target.value); setYamlOutput(""); setYamlError(""); }}
+              placeholder={yamlDirection === "json-to-yaml" ? "Paste JSON…" : "Paste YAML…"}
+              spellCheck={false}
+              className="h-52 w-full resize-y rounded-xl border border-zinc-700 bg-zinc-900 p-3 font-mono text-sm text-zinc-100 placeholder-zinc-600 outline-none transition-colors duration-150 focus:border-amber-400/60"
+            />
+            {yamlError && <p className="font-mono text-xs text-red-400">{yamlError}</p>}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleYamlConvert}
+            disabled={!yamlInput.trim()}
+            className="self-start rounded-xl bg-amber-400 px-5 py-2 text-sm font-semibold text-zinc-900 transition-all duration-150 hover:bg-amber-300 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Convert
+          </button>
+
+          {yamlOutput && (
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-zinc-300">
+                  {yamlDirection === "json-to-yaml" ? "YAML output" : "JSON output"}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={handleYamlCopy}
+                    className="rounded-lg border border-zinc-700 px-3 py-1 text-xs text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+                  >
+                    {yamlCopied ? "Copied!" : "Copy"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleYamlDownload}
+                    className="rounded-lg border border-zinc-700 px-3 py-1 text-xs text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+                  >
+                    Download
+                  </button>
+                </div>
+              </div>
+              <pre className="max-h-96 w-full overflow-auto rounded-xl border border-zinc-700 bg-zinc-950 p-3 font-mono text-sm text-zinc-100">
+                {yamlOutput}
+              </pre>
             </div>
           )}
         </div>
