@@ -56,6 +56,20 @@ export function Nav() {
     <nav className="border-b border-zinc-800 bg-zinc-950 px-4">
       <div className="mx-auto flex h-12 max-w-7xl items-center gap-1">
 
+        {/* Home link — always visible */}
+        <Link
+          href="/"
+          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+            pathname === "/" ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
+          }`}
+        >
+          Home
+        </Link>
+
+        {pinnedItems.length > 0 && (
+          <div className="mx-1 h-5 w-px bg-zinc-700" />
+        )}
+
         {/* Pinned tools — fully settings-driven */}
         {pinnedItems.map(({ href, label }) => (
           <Link

@@ -27,7 +27,7 @@ export interface Settings {
 }
 
 const DEFAULTS: Settings = {
-  pinnedTools: ["/", "/json"],
+  pinnedTools: ["/files", "/json"],
   hiddenTools: [],
   accent: "amber",
 };

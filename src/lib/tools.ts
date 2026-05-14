@@ -12,7 +12,7 @@ export const TOOL_GROUPS: ToolGroup[] = [
   {
     group: "Core",
     items: [
-      { href: "/", label: "File Converter" },
+      { href: "/files", label: "File Converter" },
       { href: "/json", label: "JSON Tools" },
     ],
   },
