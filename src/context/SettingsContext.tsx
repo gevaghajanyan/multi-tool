@@ -25,6 +25,7 @@ export interface Settings {
   hiddenTools: string[];
   accent: AccentKey;
   theme: "dark" | "light";
+  recentTools: string[];
 }
 
 const DEFAULTS: Settings = {
@@ -32,9 +33,12 @@ const DEFAULTS: Settings = {
   hiddenTools: [],
   accent: "amber",
   theme: "dark",
+  recentTools: [],
 };
 
 const STORAGE_KEY = "devtools-settings-v2";
+
+const MAX_RECENT = 6;
 
 interface SettingsCtx {
   settings: Settings;
@@ -42,6 +46,7 @@ interface SettingsCtx {
   toggleHide: (href: string) => void;
   setAccent: (key: AccentKey) => void;
   toggleTheme: () => void;
+  trackRecent: (href: string) => void;
   reset: () => void;
 }
 
@@ -103,13 +108,20 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     update((prev) => ({ ...prev, theme: prev.theme === "dark" ? "light" : "dark" }));
   }, [update]);
 
+  const trackRecent = useCallback((href: string) => {
+    update((prev) => ({
+      ...prev,
+      recentTools: [href, ...prev.recentTools.filter((h) => h !== href)].slice(0, MAX_RECENT),
+    }));
+  }, [update]);
+
   const reset = useCallback(() => {
     setSettings(DEFAULTS);
     persist(DEFAULTS);
   }, []);
 
   return (
-    <Ctx.Provider value={{ settings, togglePin, toggleHide, setAccent, toggleTheme, reset }}>
+    <Ctx.Provider value={{ settings, togglePin, toggleHide, setAccent, toggleTheme, trackRecent, reset }}>
       {children}
     </Ctx.Provider>
   );

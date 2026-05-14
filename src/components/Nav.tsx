@@ -70,7 +70,7 @@ function XIcon() {
 
 export function Nav() {
   const pathname = usePathname();
-  const { settings, toggleTheme } = useSettings();
+  const { settings, toggleTheme, trackRecent } = useSettings();
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -85,11 +85,14 @@ export function Nav() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
-  // Close everything on navigation
+  // Close menus + track recent tool on navigation
   useEffect(() => {
     setOpen(false);
     setMobileOpen(false);
-  }, [pathname]);
+    if (ALL_TOOLS.some((t) => t.href === pathname)) {
+      trackRecent(pathname);
+    }
+  }, [pathname, trackRecent]);
 
   // Cmd+K shortcut
   useEffect(() => {

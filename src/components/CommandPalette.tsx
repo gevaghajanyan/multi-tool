@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ALL_TOOLS, TOOL_GROUPS, scoreTool, type ToolItem } from "@/src/lib/tools";
+import { useSettings } from "@/src/context/SettingsContext";
 
 interface Props {
   open: boolean;
@@ -46,6 +47,11 @@ export function CommandPalette({ open, onClose }: Props) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const activeRef = useRef<HTMLButtonElement>(null);
+  const { settings } = useSettings();
+
+  const recentItems = settings.recentTools
+    .map((href) => ALL_TOOLS.find((t) => t.href === href))
+    .filter(Boolean) as ToolItem[];
 
   const results: ToolItem[] = query.trim()
     ? ALL_TOOLS
@@ -170,31 +176,62 @@ export function CommandPalette({ open, onClose }: Props) {
             })
           ) : (
             /* Grouped default view */
-            TOOL_GROUPS.map(({ group, items }) => (
-              <div key={group} className="mb-2">
-                <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
-                  {group}
-                </p>
-                {items.map((tool) => {
-                  const gi = ALL_TOOLS.findIndex((t) => t.href === tool.href);
-                  return (
-                    <button
-                      key={tool.href}
-                      ref={gi === activeIndex ? activeRef : undefined}
-                      type="button"
-                      onMouseEnter={() => setActiveIndex(gi)}
-                      onClick={() => { router.push(tool.href); onClose(); }}
-                      className={`w-full rounded-lg px-3 py-2 text-left transition-colors duration-75 ${
-                        gi === activeIndex ? "bg-zinc-800" : "hover:bg-zinc-800/60"
-                      }`}
-                    >
-                      <span className="text-sm text-zinc-300">{tool.label}</span>
-                      <p className="mt-0.5 text-xs text-zinc-600">{tool.description}</p>
-                    </button>
-                  );
-                })}
-              </div>
-            ))
+            <>
+              {recentItems.length > 0 && (
+                <div className="mb-2">
+                  <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+                    Recent
+                  </p>
+                  {recentItems.map((tool) => {
+                    const gi = ALL_TOOLS.findIndex((t) => t.href === tool.href);
+                    return (
+                      <button
+                        key={tool.href}
+                        ref={gi === activeIndex ? activeRef : undefined}
+                        type="button"
+                        onMouseEnter={() => setActiveIndex(gi)}
+                        onClick={() => { router.push(tool.href); onClose(); }}
+                        className={`w-full rounded-lg px-3 py-2 text-left transition-colors duration-75 ${
+                          gi === activeIndex ? "bg-zinc-800" : "hover:bg-zinc-800/60"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-zinc-300">{tool.label}</span>
+                          <span className="text-[10px] text-zinc-600">↩</span>
+                        </div>
+                        <p className="mt-0.5 text-xs text-zinc-600">{tool.description}</p>
+                      </button>
+                    );
+                  })}
+                  <div className="mx-3 my-2 border-t border-zinc-800" />
+                </div>
+              )}
+              {TOOL_GROUPS.map(({ group, items }) => (
+                <div key={group} className="mb-2">
+                  <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+                    {group}
+                  </p>
+                  {items.map((tool) => {
+                    const gi = ALL_TOOLS.findIndex((t) => t.href === tool.href);
+                    return (
+                      <button
+                        key={tool.href}
+                        ref={gi === activeIndex ? activeRef : undefined}
+                        type="button"
+                        onMouseEnter={() => setActiveIndex(gi)}
+                        onClick={() => { router.push(tool.href); onClose(); }}
+                        className={`w-full rounded-lg px-3 py-2 text-left transition-colors duration-75 ${
+                          gi === activeIndex ? "bg-zinc-800" : "hover:bg-zinc-800/60"
+                        }`}
+                      >
+                        <span className="text-sm text-zinc-300">{tool.label}</span>
+                        <p className="mt-0.5 text-xs text-zinc-600">{tool.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </>
           )}
         </div>
 

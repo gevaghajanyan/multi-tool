@@ -1,29 +1,6 @@
 import Link from "next/link";
 import { TOOL_GROUPS } from "@/src/lib/tools";
-
-const TOOL_DESCRIPTIONS: Record<string, string> = {
-  "/files": "Convert video, audio & images",
-  "/json": "Format & validate JSON",
-  "/base64": "Encode & decode Base64",
-  "/html": "HTML entity encode/decode",
-  "/hash": "Generate MD5, SHA hashes",
-  "/jwt": "Decode & inspect JWTs",
-  "/jwt-builder": "Create signed JWTs",
-  "/password": "Generate secure passwords",
-  "/uuid": "Generate UUIDs",
-  "/csv": "Convert between CSV & JSON",
-  "/url": "Parse & analyze URLs",
-  "/timestamp": "Convert timestamps & dates",
-  "/base": "Convert between number bases",
-  "/color": "Convert color formats",
-  "/size": "Convert size units",
-  "/regex": "Test regular expressions",
-  "/diff": "Compare text differences",
-  "/cron": "Parse cron expressions",
-  "/case": "Convert string cases",
-  "/markdown": "Preview Markdown live",
-  "/lorem": "Generate placeholder text",
-};
+import { RecentTools } from "@/src/components/RecentTools";
 
 export default function Home() {
   return (
@@ -36,6 +13,8 @@ export default function Home() {
           </p>
         </div>
 
+        <RecentTools />
+
         <div className="space-y-8">
           {TOOL_GROUPS.map(({ group, items }) => (
             <section key={group}>
@@ -43,7 +22,7 @@ export default function Home() {
                 {group}
               </h2>
               <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
-                {items.map(({ href, label }) => (
+                {items.map(({ href, label, description }) => (
                   <Link
                     key={href}
                     href={href}
@@ -53,7 +32,7 @@ export default function Home() {
                       {label}
                     </p>
                     <p className="mt-0.5 text-xs text-zinc-600 group-hover:text-zinc-500">
-                      {TOOL_DESCRIPTIONS[href] ?? ""}
+                      {description}
                     </p>
                   </Link>
                 ))}

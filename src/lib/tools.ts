@@ -26,6 +26,24 @@ export const TOOL_GROUPS: ToolGroup[] = [
         description: "Format, validate, minify & diff JSON",
         keywords: ["json", "format", "prettify", "minify", "validate", "lint", "yaml", "compare", "diff", "tree", "viewer", "parse", "stringify", "pretty print"],
       },
+      {
+        href: "/qr",
+        label: "QR Code Generator",
+        description: "Generate QR codes for URLs, text & more",
+        keywords: ["qr", "qr code", "qrcode", "generate", "url", "link", "barcode", "scan", "wifi", "vcard", "share", "png", "svg", "download"],
+      },
+      {
+        href: "/resize",
+        label: "Image Resize",
+        description: "Resize images locally — nothing is uploaded",
+        keywords: ["image", "resize", "scale", "width", "height", "png", "jpeg", "jpg", "webp", "compress", "crop", "dimensions", "photo", "picture", "thumbnail", "downscale", "upscale", "aspect ratio"],
+      },
+      {
+        href: "/chmod",
+        label: "Chmod Calculator",
+        description: "Build Unix file permissions visually or type an octal value",
+        keywords: ["chmod", "permissions", "unix", "linux", "octal", "file permissions", "rwx", "setuid", "setgid", "sticky", "owner", "group", "755", "644", "777", "symbolic", "mode", "access"],
+      },
     ],
   },
   {
@@ -83,6 +101,18 @@ export const TOOL_GROUPS: ToolGroup[] = [
   {
     group: "Data",
     items: [
+      {
+        href: "/json-to-ts",
+        label: "JSON → TypeScript",
+        description: "Generate TypeScript interfaces from JSON data",
+        keywords: ["json", "typescript", "types", "interface", "generate", "ts", "type", "infer", "convert", "schema", "dto", "model", "definition", "json to ts", "json2ts"],
+      },
+      {
+        href: "/yaml",
+        label: "YAML ↔ JSON",
+        description: "Convert between YAML and JSON",
+        keywords: ["yaml", "json", "convert", "yml", "config", "serialization", "parse", "kubernetes", "docker", "compose", "ansible", "helm", "toml", "data format", "indent", "key value"],
+      },
       {
         href: "/csv",
         label: "CSV ↔ JSON",
