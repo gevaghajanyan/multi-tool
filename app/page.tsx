@@ -27,7 +27,7 @@ const TOOL_DESCRIPTIONS: Record<string, string> = {
 
 export default function Home() {
   return (
-    <main className="min-h-dvh bg-zinc-950 px-6 py-12 text-zinc-100">
+    <main className="min-h-dvh bg-zinc-950 px-4 py-8 text-zinc-100 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10">
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">Dev Tools</h1>

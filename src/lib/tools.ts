@@ -1,6 +1,8 @@
 export interface ToolItem {
   href: string;
   label: string;
+  description: string;
+  keywords: string[];
 }
 
 export interface ToolGroup {
@@ -12,49 +14,191 @@ export const TOOL_GROUPS: ToolGroup[] = [
   {
     group: "Core",
     items: [
-      { href: "/files", label: "File Converter" },
-      { href: "/json", label: "JSON Tools" },
+      {
+        href: "/files",
+        label: "File Converter",
+        description: "Convert video, audio & images in the browser",
+        keywords: ["video", "audio", "image", "mp4", "mp3", "png", "jpg", "jpeg", "webp", "gif", "mkv", "mov", "avi", "wav", "ogg", "flac", "aac", "m4a", "convert", "ffmpeg", "compress", "transcode", "media"],
+      },
+      {
+        href: "/json",
+        label: "JSON Tools",
+        description: "Format, validate, minify & diff JSON",
+        keywords: ["json", "format", "prettify", "minify", "validate", "lint", "yaml", "compare", "diff", "tree", "viewer", "parse", "stringify", "pretty print"],
+      },
     ],
   },
   {
     group: "Encoding",
     items: [
-      { href: "/base64", label: "Base64" },
-      { href: "/html", label: "HTML Entities" },
-      { href: "/hash", label: "Hash Generator" },
+      {
+        href: "/base64",
+        label: "Base64",
+        description: "Encode & decode Base64 strings",
+        keywords: ["base64", "encode", "decode", "btoa", "atob", "binary", "string", "data uri", "image encode", "file encode"],
+      },
+      {
+        href: "/html",
+        label: "HTML Entities",
+        description: "Encode & decode HTML entities",
+        keywords: ["html", "entities", "escape", "unescape", "encode", "decode", "&amp;", "&lt;", "&gt;", "special characters", "xml", "xss"],
+      },
+      {
+        href: "/hash",
+        label: "Hash Generator",
+        description: "Generate MD5, SHA-1, SHA-256, SHA-512 hashes",
+        keywords: ["hash", "md5", "sha", "sha1", "sha256", "sha512", "checksum", "crypto", "digest", "fingerprint", "hmac", "encrypt"],
+      },
     ],
   },
   {
     group: "Auth & Tokens",
     items: [
-      { href: "/jwt", label: "JWT Decoder" },
-      { href: "/jwt-builder", label: "JWT Builder" },
-      { href: "/password", label: "Password Generator" },
-      { href: "/uuid", label: "UUID Generator" },
+      {
+        href: "/jwt",
+        label: "JWT Decoder",
+        description: "Decode & inspect JWT tokens",
+        keywords: ["jwt", "token", "decode", "json web token", "auth", "bearer", "claims", "payload", "header", "signature", "oauth", "session"],
+      },
+      {
+        href: "/jwt-builder",
+        label: "JWT Builder",
+        description: "Sign & create JWT tokens",
+        keywords: ["jwt", "token", "sign", "create", "build", "generate", "json web token", "hs256", "rs256", "secret", "auth", "oauth"],
+      },
+      {
+        href: "/password",
+        label: "Password Generator",
+        description: "Generate secure random passwords",
+        keywords: ["password", "generate", "random", "secure", "strong", "passphrase", "credentials", "entropy", "symbols", "special chars"],
+      },
+      {
+        href: "/uuid",
+        label: "UUID Generator",
+        description: "Generate v4 UUIDs",
+        keywords: ["uuid", "guid", "unique id", "id", "generate", "random", "v4", "identifier", "ulid"],
+      },
     ],
   },
   {
     group: "Data",
     items: [
-      { href: "/csv", label: "CSV ↔ JSON" },
-      { href: "/url", label: "URL Parser" },
-      { href: "/timestamp", label: "Timestamp" },
-      { href: "/base", label: "Base Converter" },
-      { href: "/color", label: "Color Converter" },
-      { href: "/size", label: "Size Converter" },
+      {
+        href: "/csv",
+        label: "CSV ↔ JSON",
+        description: "Convert between CSV and JSON",
+        keywords: ["csv", "json", "convert", "spreadsheet", "excel", "table", "tsv", "delimiter", "rows", "columns", "import", "export", "data"],
+      },
+      {
+        href: "/url",
+        label: "URL Parser",
+        description: "Parse, encode & decode URLs",
+        keywords: ["url", "parse", "query", "params", "search params", "href", "link", "decode", "encode", "uri", "query string", "path", "hostname", "protocol", "fragment", "anchor"],
+      },
+      {
+        href: "/timestamp",
+        label: "Timestamp",
+        description: "Convert Unix timestamps to dates and back",
+        keywords: ["timestamp", "unix", "epoch", "date", "time", "convert", "iso", "utc", "datetime", "milliseconds", "seconds", "now", "format"],
+      },
+      {
+        href: "/base",
+        label: "Base Converter",
+        description: "Convert between decimal, hex, binary & octal",
+        keywords: ["base", "hex", "hexadecimal", "binary", "decimal", "octal", "convert", "radix", "number", "bit", "0x", "0b", "base 2", "base 16", "base 8", "base 10", "int"],
+      },
+      {
+        href: "/color",
+        label: "Color Converter",
+        description: "Convert between HEX, RGB, HSL & more",
+        keywords: ["color", "colour", "hex", "rgb", "rgba", "hsl", "hsla", "hsv", "oklch", "css", "design", "palette", "picker", "convert", "web color", "#"],
+      },
+      {
+        href: "/size",
+        label: "Size Converter",
+        description: "Convert px, rem, em, vw, pt, cm, mm and more",
+        keywords: ["size", "units", "px", "rem", "em", "pixel", "pixels", "pt", "pt to px", "px to rem", "rem to px", "em to px", "vw", "vh", "cm", "mm", "inch", "convert", "css units", "font size", "viewport", "responsive", "typography"],
+      },
     ],
   },
   {
     group: "Text & Code",
     items: [
-      { href: "/regex", label: "Regex Tester" },
-      { href: "/diff", label: "Text Diff" },
-      { href: "/cron", label: "Cron Parser" },
-      { href: "/case", label: "String Case" },
-      { href: "/markdown", label: "Markdown Preview" },
-      { href: "/lorem", label: "Lorem Ipsum" },
+      {
+        href: "/regex",
+        label: "Regex Tester",
+        description: "Test regular expressions with live highlighting",
+        keywords: ["regex", "regexp", "regular expression", "pattern", "match", "test", "flags", "global", "multiline", "capture group", "lookahead", "search", "replace"],
+      },
+      {
+        href: "/diff",
+        label: "Text Diff",
+        description: "Compare two texts and highlight differences",
+        keywords: ["diff", "compare", "difference", "text", "side by side", "changes", "delta", "patch", "merge", "conflict", "before after"],
+      },
+      {
+        href: "/cron",
+        label: "Cron Parser",
+        description: "Parse & explain cron expressions",
+        keywords: ["cron", "schedule", "expression", "parse", "timer", "job", "interval", "recurring", "crontab", "task", "automation", "every"],
+      },
+      {
+        href: "/case",
+        label: "String Case",
+        description: "Convert between camelCase, snake_case, PascalCase & more",
+        keywords: ["case", "camel", "camelcase", "snake", "snake_case", "pascal", "pascalcase", "kebab", "kebab-case", "upper", "lowercase", "title case", "convert", "string", "naming", "transform", "screaming snake"],
+      },
+      {
+        href: "/markdown",
+        label: "Markdown Preview",
+        description: "Live Markdown preview with syntax highlighting",
+        keywords: ["markdown", "md", "preview", "render", "html", "document", "editor", "live", "readme", "syntax", "github markdown", "commonmark"],
+      },
+      {
+        href: "/lorem",
+        label: "Lorem Ipsum",
+        description: "Generate placeholder Lorem Ipsum text",
+        keywords: ["lorem", "ipsum", "placeholder", "text", "dummy", "generate", "fake", "content", "filler", "paragraphs", "words", "sentences"],
+      },
     ],
   },
 ];
 
 export const ALL_TOOLS: ToolItem[] = TOOL_GROUPS.flatMap((g) => g.items);
+
+/** Score a tool against a query. Higher = better match. 0 = no match. */
+export function scoreTool(tool: ToolItem, raw: string): number {
+  const q = raw.toLowerCase().trim();
+  if (!q) return 0;
+
+  const label = tool.label.toLowerCase();
+  const desc = tool.description.toLowerCase();
+
+  if (label === q) return 100;
+  if (label.startsWith(q)) return 90;
+  if (label.includes(q)) return 80;
+
+  // label word boundary: any word in the label starts with query
+  if (label.split(/\s+/).some((w) => w.startsWith(q))) return 75;
+
+  // exact keyword match
+  if (tool.keywords.some((k) => k === q)) return 70;
+  // keyword starts with query
+  if (tool.keywords.some((k) => k.startsWith(q))) return 60;
+  // keyword contains query
+  if (tool.keywords.some((k) => k.includes(q))) return 50;
+  // keyword word boundary
+  if (tool.keywords.some((k) => k.split(/\s+/).some((w) => w.startsWith(q)))) return 45;
+
+  // description contains query
+  if (desc.includes(q)) return 30;
+
+  // multi-word: every word in the query appears somewhere
+  const words = q.split(/\s+/).filter(Boolean);
+  if (words.length > 1) {
+    const allText = `${label} ${tool.keywords.join(" ")} ${desc}`;
+    if (words.every((w) => allText.includes(w))) return 20;
+  }
+
+  return 0;
+}

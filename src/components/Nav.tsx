@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSettings } from "@/src/context/SettingsContext";
 import { ALL_TOOLS, TOOL_GROUPS } from "@/src/lib/tools";
+import { CommandPalette } from "@/src/components/CommandPalette";
 
 function GearIcon() {
   return (
@@ -39,12 +40,43 @@ function MoonIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </svg>
+  );
+}
+
+function MenuIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
 export function Nav() {
   const pathname = usePathname();
   const { settings, toggleTheme } = useSettings();
   const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
+  // Close desktop dropdown on outside click
   useEffect(() => {
     function onPointerDown(e: PointerEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -53,14 +85,28 @@ export function Nav() {
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  // Close everything on navigation
+  useEffect(() => {
+    setOpen(false);
+    setMobileOpen(false);
+  }, [pathname]);
 
-  // All tools in order, resolved from the pinned hrefs list
+  // Cmd+K shortcut
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
   const pinnedItems = settings.pinnedTools
     .map((href) => ALL_TOOLS.find((t) => t.href === href))
     .filter(Boolean) as { href: string; label: string }[];
 
-  // Dropdown: non-pinned, non-hidden tools, grouped
   const dropdownGroups = TOOL_GROUPS.map((g) => ({
     ...g,
     items: g.items.filter(
@@ -70,119 +116,205 @@ export function Nav() {
 
   const hasDropdownItems = dropdownGroups.length > 0;
 
-  // Highlight "Tools" button when on a tool page that lives in the dropdown
   const dropdownActive =
     hasDropdownItems &&
     ALL_TOOLS.some((t) => t.href === pathname) &&
     !settings.pinnedTools.includes(pathname);
 
+  const linkCls = (active: boolean) =>
+    `rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+      active ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
+    }`;
+
   return (
-    <nav className="border-b border-zinc-800 bg-zinc-950 px-4">
-      <div className="mx-auto flex h-12 max-w-7xl items-center gap-1">
+    <>
+      <nav className="border-b border-zinc-800 bg-zinc-950 px-4">
+        <div className="mx-auto flex h-12 max-w-7xl items-center gap-1">
 
-        {/* Home link — always visible */}
-        <Link
-          href="/"
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-            pathname === "/" ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
-          }`}
-        >
-          Home
-        </Link>
+          {/* Home — always visible */}
+          <Link href="/" className={linkCls(pathname === "/")}>Home</Link>
 
-        {pinnedItems.length > 0 && (
-          <div className="mx-1 h-5 w-px bg-zinc-700" />
-        )}
+          {/* ── Desktop-only: pinned tools + Tools dropdown ── */}
+          <div className="hidden sm:contents">
+            {pinnedItems.length > 0 && <div className="mx-1 h-5 w-px bg-zinc-700" />}
 
-        {/* Pinned tools — fully settings-driven */}
-        {pinnedItems.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-              pathname === href ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
+            {pinnedItems.map(({ href, label }) => (
+              <Link key={href} href={href} className={linkCls(pathname === href)}>
+                {label}
+              </Link>
+            ))}
 
-        {/* Divider — only when there are pinned items AND dropdown items */}
-        {pinnedItems.length > 0 && hasDropdownItems && (
-          <div className="mx-2 h-5 w-px bg-zinc-700" />
-        )}
+            {pinnedItems.length > 0 && hasDropdownItems && (
+              <div className="mx-2 h-5 w-px bg-zinc-700" />
+            )}
 
-        {/* Tools dropdown */}
-        {hasDropdownItems && (
-          <div ref={ref} className="relative">
-            <button
-              type="button"
-              onClick={() => setOpen((v) => !v)}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                dropdownActive || open ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
-              }`}
-            >
-              Tools
-              <svg
-                width="12" height="12" viewBox="0 0 12 12"
-                className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
-              >
-                <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+            {hasDropdownItems && (
+              <div ref={ref} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setOpen((v) => !v)}
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                    dropdownActive || open ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
+                  }`}
+                >
+                  Tools
+                  <svg
+                    width="12" height="12" viewBox="0 0 12 12"
+                    className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
+                  >
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </button>
 
-            {open && (
-              <div className="absolute left-0 top-full z-50 mt-1 w-[520px] rounded-2xl border border-zinc-800 bg-zinc-900 p-4 shadow-2xl">
-                <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                  {dropdownGroups.map(({ group, items }) => (
-                    <div key={group}>
-                      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
-                        {group}
-                      </p>
-                      <div className="flex flex-col gap-0.5">
-                        {items.map(({ href, label }) => (
-                          <Link
-                            key={href}
-                            href={href}
-                            className={`rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-100 ${
-                              pathname === href
-                                ? "bg-zinc-800 text-amber-400"
-                                : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
-                            }`}
-                          >
-                            {label}
-                          </Link>
-                        ))}
-                      </div>
+                {open && (
+                  <div className="absolute left-0 top-full z-50 mt-1 w-[min(520px,calc(100vw-2rem))] rounded-2xl border border-zinc-800 bg-zinc-900 p-4 shadow-2xl">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+                      {dropdownGroups.map(({ group, items }) => (
+                        <div key={group}>
+                          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+                            {group}
+                          </p>
+                          <div className="flex flex-col gap-0.5">
+                            {items.map(({ href, label }) => (
+                              <Link
+                                key={href}
+                                href={href}
+                                className={`rounded-lg px-2.5 py-1.5 text-sm transition-colors duration-100 ${
+                                  pathname === href
+                                    ? "bg-zinc-800 text-amber-400"
+                                    : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
+                                }`}
+                              >
+                                {label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
-        )}
 
-        {/* Theme toggle + Settings — always far right */}
-        <div className="ml-auto flex items-center gap-1">
-          <button
-            type="button"
-            onClick={toggleTheme}
-            title={settings.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            className="rounded-lg p-1.5 text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
-          >
-            {settings.theme === "dark" ? <SunIcon /> : <MoonIcon />}
-          </button>
-          <Link
-            href="/settings"
-            className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
-              pathname === "/settings" ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
-            }`}
-          >
-            <GearIcon />
-            Settings
-          </Link>
+          {/* Right side: search + theme + settings (desktop) + hamburger (mobile) */}
+          <div className="ml-auto flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setPaletteOpen(true)}
+              title="Search tools (⌘K)"
+              className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+            >
+              <SearchIcon />
+              <span className="hidden text-zinc-600 sm:inline text-xs">⌘K</span>
+            </button>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              title={settings.theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+              className="rounded-lg p-1.5 text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+            >
+              {settings.theme === "dark" ? <SunIcon /> : <MoonIcon />}
+            </button>
+            {/* Settings — desktop only */}
+            <Link
+              href="/settings"
+              className={`hidden sm:flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                pathname === "/settings" ? "text-amber-400" : "text-zinc-400 hover:text-zinc-100"
+              }`}
+            >
+              <GearIcon />
+              Settings
+            </Link>
+            {/* Hamburger — mobile only */}
+            <button
+              type="button"
+              onClick={() => setMobileOpen((v) => !v)}
+              className="sm:hidden rounded-lg p-1.5 text-zinc-400 transition-colors duration-150 hover:text-zinc-100"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileOpen ? <XIcon /> : <MenuIcon />}
+            </button>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="sm:hidden fixed inset-0 z-40 flex flex-col">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setMobileOpen(false)}
+          />
+          {/* Panel — slides under the nav */}
+          <div className="relative mt-12 max-h-[calc(100dvh-3rem)] overflow-y-auto border-b border-zinc-800 bg-zinc-950 shadow-2xl">
+            <div className="p-4 space-y-5">
+              {/* Pinned tools */}
+              {pinnedItems.length > 0 && (
+                <div>
+                  <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">Pinned</p>
+                  <div className="flex flex-col gap-0.5">
+                    {pinnedItems.map(({ href, label }) => (
+                      <Link
+                        key={href}
+                        href={href}
+                        className={`rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-100 ${
+                          pathname === href ? "bg-zinc-800 text-amber-400" : "text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+                        }`}
+                      >
+                        {label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* All tool groups */}
+              {TOOL_GROUPS.map(({ group, items }) => {
+                const visible = items.filter((t) => !settings.hiddenTools.includes(t.href));
+                if (!visible.length) return null;
+                return (
+                  <div key={group}>
+                    <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-600">
+                      {group}
+                    </p>
+                    <div className="flex flex-col gap-0.5">
+                      {visible.map(({ href, label }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          className={`rounded-lg px-3 py-2.5 text-sm transition-colors duration-100 ${
+                            pathname === href ? "bg-zinc-800 text-amber-400" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
+                          }`}
+                        >
+                          {label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Settings */}
+              <div className="border-t border-zinc-800 pt-4">
+                <Link
+                  href="/settings"
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-100 ${
+                    pathname === "/settings" ? "text-amber-400" : "text-zinc-400 hover:bg-zinc-800 hover:text-zinc-100"
+                  }`}
+                >
+                  <GearIcon />
+                  Settings
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+    </>
   );
 }

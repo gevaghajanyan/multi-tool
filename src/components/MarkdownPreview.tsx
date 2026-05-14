@@ -66,7 +66,7 @@ export function MarkdownPreview() {
           </button>
         </div>
 
-        <div className={`grid gap-4 ${view === "split" ? "grid-cols-2" : "grid-cols-1"}`}>
+        <div className={`grid gap-4 ${view === "split" ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
           {(view === "split" || view === "source") && (
             <div className="flex flex-col gap-1.5">
               {view === "split" && <span className="text-xs font-medium uppercase tracking-wide text-zinc-600">Source</span>}

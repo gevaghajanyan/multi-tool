@@ -104,7 +104,7 @@ export function PasswordGenerator() {
         </div>
 
         {/* Toggles */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-2">
           {toggle("Uppercase (A–Z)", upper, setUpper)}
           {toggle("Lowercase (a–z)", lower, setLower)}
           {toggle("Digits (0–9)", digits, setDigits)}

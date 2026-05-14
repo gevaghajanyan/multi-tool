@@ -161,7 +161,7 @@ export function CronParser() {
 
         {result.fields.length > 0 && (
           <>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
               {result.fields.map(({ label, parsed }) => (
                 <div key={label} className="flex flex-col gap-1 rounded-lg border border-zinc-800 bg-zinc-900 p-2">
                   <p className="text-[10px] font-medium uppercase tracking-wide text-zinc-600">{label}</p>
