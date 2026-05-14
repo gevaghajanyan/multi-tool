@@ -14,5 +14,9 @@ export function AccentStyler() {
     root.style.setProperty("--color-amber-300", accent["300"]);
   }, [settings.accent]);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", settings.theme === "dark");
+  }, [settings.theme]);
+
   return null;
 }

@@ -24,12 +24,14 @@ export interface Settings {
   pinnedTools: string[];
   hiddenTools: string[];
   accent: AccentKey;
+  theme: "dark" | "light";
 }
 
 const DEFAULTS: Settings = {
   pinnedTools: ["/files", "/json"],
   hiddenTools: [],
   accent: "amber",
+  theme: "dark",
 };
 
 const STORAGE_KEY = "devtools-settings-v2";
@@ -39,6 +41,7 @@ interface SettingsCtx {
   togglePin: (href: string) => void;
   toggleHide: (href: string) => void;
   setAccent: (key: AccentKey) => void;
+  toggleTheme: () => void;
   reset: () => void;
 }
 
@@ -96,13 +99,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     update((prev) => ({ ...prev, accent: key }));
   }, [update]);
 
+  const toggleTheme = useCallback(() => {
+    update((prev) => ({ ...prev, theme: prev.theme === "dark" ? "light" : "dark" }));
+  }, [update]);
+
   const reset = useCallback(() => {
     setSettings(DEFAULTS);
     persist(DEFAULTS);
   }, []);
 
   return (
-    <Ctx.Provider value={{ settings, togglePin, toggleHide, setAccent, reset }}>
+    <Ctx.Provider value={{ settings, togglePin, toggleHide, setAccent, toggleTheme, reset }}>
       {children}
     </Ctx.Provider>
   );
