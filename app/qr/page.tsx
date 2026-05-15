@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { QrGenerator } from "@/src/components/QrGenerator";
 
 export const metadata: Metadata = {
-  title: "QR Code Generator — Dev Tools",
+  title: "QR Code Generator",
   description: "Generate QR codes for URLs, text, and more — entirely in your browser.",
 };
 

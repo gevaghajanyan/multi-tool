@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { UuidGenerator } from "@/src/components/UuidGenerator";
 
 export const metadata: Metadata = {
-  title: "UUID / ULID Generator — Dev Tools",
+  title: "UUID / ULID Generator",
   description: "Generate UUID v4 and ULID unique identifiers.",
 };
 

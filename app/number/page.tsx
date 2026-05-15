@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { NumberFormatter } from "@/src/components/NumberFormatter";
 
 export const metadata: Metadata = {
-  title: "Number Formatter — Dev Tools",
+  title: "Number Formatter",
   description: "Format numbers with locale, currency, notation, and unit options.",
 };
 

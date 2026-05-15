@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { MarkdownToPdf } from "@/src/components/MarkdownToPdf";
 
 export const metadata: Metadata = {
-  title: "Markdown → PDF — Dev Tools",
+  title: "Markdown → PDF",
   description: "Convert Markdown to a downloadable PDF.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JwtBuilder } from "@/src/components/JwtBuilder";
 
 export const metadata: Metadata = {
-  title: "JWT Builder — File Converter",
+  title: "JWT Builder",
   description: "Sign a JSON payload and build a JWT token.",
 };
 

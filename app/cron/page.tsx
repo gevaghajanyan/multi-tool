@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CronParser } from "@/src/components/CronParser";
 
 export const metadata: Metadata = {
-  title: "Cron Parser — File Converter",
+  title: "Cron Parser",
   description: "Explain a cron expression and see the next scheduled runs.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { YamlConverter } from "@/src/components/YamlConverter";
 
 export const metadata: Metadata = {
-  title: "YAML ↔ JSON — Dev Tools",
+  title: "YAML ↔ JSON",
   description: "Convert between YAML and JSON instantly in your browser.",
 };
 

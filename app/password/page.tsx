@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PasswordGenerator } from "@/src/components/PasswordGenerator";
 
 export const metadata: Metadata = {
-  title: "Password Generator — File Converter",
+  title: "Password Generator",
   description: "Generate cryptographically random passwords.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ChmodCalculator } from "@/src/components/ChmodCalculator";
 
 export const metadata: Metadata = {
-  title: "Chmod Calculator — Dev Tools",
+  title: "Chmod Calculator",
   description: "Build Unix file permissions visually or type an octal value.",
 };
 

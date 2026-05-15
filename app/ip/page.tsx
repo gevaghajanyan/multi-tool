@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { IpInfo } from "@/src/components/IpInfo";
 
 export const metadata: Metadata = {
-  title: "IP Info — Dev Tools",
+  title: "IP Info",
   description: "Look up geolocation and network details for any IP address.",
 };
 

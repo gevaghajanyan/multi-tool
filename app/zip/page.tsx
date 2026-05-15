@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ZipInspector } from "@/src/components/ZipInspector";
 
 export const metadata: Metadata = {
-  title: "ZIP Inspector — Dev Tools",
+  title: "ZIP Inspector",
   description: "Inspect and extract files from ZIP archives locally.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { HtmlEntities } from "@/src/components/HtmlEntities";
 
 export const metadata: Metadata = {
-  title: "HTML Entities — File Converter",
+  title: "HTML Entities",
   description: "Encode or decode HTML entities in text.",
 };
 

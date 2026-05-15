@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ColorConverter } from "@/src/components/ColorConverter";
 
 export const metadata: Metadata = {
-  title: "Color Converter — File Converter",
+  title: "Color Converter",
   description: "Convert between HEX, RGB, and HSL color formats.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JsonFormatter } from "@/src/components/JsonFormatter";
 
 export const metadata: Metadata = {
-  title: "JSON Tools — File Converter",
+  title: "JSON Tools",
   description: "Format, parse, and diff JSON or JavaScript objects in your browser.",
 };
 

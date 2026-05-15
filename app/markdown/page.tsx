@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { MarkdownPreview } from "@/src/components/MarkdownPreview";
 
 export const metadata: Metadata = {
-  title: "Markdown Preview — File Converter",
+  title: "Markdown Preview",
   description: "Write Markdown and see the rendered output live.",
 };
 

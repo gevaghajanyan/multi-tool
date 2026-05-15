@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { UrlParser } from "@/src/components/UrlParser";
 
 export const metadata: Metadata = {
-  title: "URL Parser — File Converter",
+  title: "URL Parser",
   description: "Break a URL into its parts and edit query parameters.",
 };
 

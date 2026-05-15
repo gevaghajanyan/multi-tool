@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SettingsPanel } from "@/src/components/SettingsPanel";
 
 export const metadata: Metadata = {
-  title: "Settings — Dev Tools",
+  title: "Settings",
   description: "Customise navigation and appearance.",
 };
 

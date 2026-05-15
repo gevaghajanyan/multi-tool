@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BaseConverter } from "@/src/components/BaseConverter";
 
 export const metadata: Metadata = {
-  title: "Base Converter — File Converter",
+  title: "Base Converter",
   description: "Convert numbers between decimal, hex, binary, and octal.",
 };
 

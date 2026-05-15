@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JsonToTs } from "@/src/components/JsonToTs";
 
 export const metadata: Metadata = {
-  title: "JSON → TypeScript — Dev Tools",
+  title: "JSON → TypeScript",
   description: "Generate TypeScript interfaces from JSON data, entirely in your browser.",
 };
 

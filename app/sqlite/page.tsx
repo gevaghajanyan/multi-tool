@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SqlitePlayground } from "@/src/components/SqlitePlayground";
 
 export const metadata: Metadata = {
-  title: "SQLite Playground — Dev Tools",
+  title: "SQLite Playground",
   description: "Run SQL queries in the browser with an in-memory SQLite database.",
 };
 

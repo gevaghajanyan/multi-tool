@@ -15,9 +15,42 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+const DESCRIPTION = "Free browser-based developer utilities — JSON, Base64, JWT, regex, UUID, DNS, HTTP client and more. No installs, no uploads.";
+
 export const metadata: Metadata = {
-  title: "Dev Tools",
-  description: "A collection of browser-based developer utilities.",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "Dev Tools",
+    template: "%s — Dev Tools",
+  },
+  description: DESCRIPTION,
+  keywords: [
+    "developer tools", "dev tools", "json formatter", "base64 encoder", "jwt decoder",
+    "regex tester", "uuid generator", "timestamp converter", "dns lookup", "http client",
+    "browser tools", "online tools", "free developer utilities",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "Dev Tools",
+    title: {
+      default: "Dev Tools",
+      template: "%s — Dev Tools",
+    },
+    description: DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: "Dev Tools",
+      template: "%s — Dev Tools",
+    },
+    description: DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

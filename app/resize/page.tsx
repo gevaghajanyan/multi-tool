@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ImageResize } from "@/src/components/ImageResize";
 
 export const metadata: Metadata = {
-  title: "Image Resize — Dev Tools",
+  title: "Image Resize",
   description: "Resize images locally in your browser — nothing is uploaded.",
 };
 

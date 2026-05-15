@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { HashGenerator } from "@/src/components/HashGenerator";
 
 export const metadata: Metadata = {
-  title: "Hash Generator — File Converter",
+  title: "Hash Generator",
   description: "Generate SHA hashes from text or files.",
 };
 

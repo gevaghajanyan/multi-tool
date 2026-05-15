@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { JwtDecoder } from "@/src/components/JwtDecoder";
 
 export const metadata: Metadata = {
-  title: "JWT Decoder — File Converter",
+  title: "JWT Decoder",
   description: "Inspect JSON Web Token headers, payloads, and expiry in your browser.",
 };
 

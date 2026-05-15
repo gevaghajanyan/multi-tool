@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { RegexTester } from "@/src/components/RegexTester";
 
 export const metadata: Metadata = {
-  title: "Regex Tester — File Converter",
+  title: "Regex Tester",
   description: "Test regular expressions with live match highlighting.",
 };
 

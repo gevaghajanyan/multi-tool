@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { HttpClient } from "@/src/components/HttpClient";
 
 export const metadata: Metadata = {
-  title: "HTTP Client — Dev Tools",
+  title: "HTTP Client",
   description: "Send HTTP requests and inspect responses in the browser.",
 };
 

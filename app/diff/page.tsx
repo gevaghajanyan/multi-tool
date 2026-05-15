@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TextDiff } from "@/src/components/TextDiff";
 
 export const metadata: Metadata = {
-  title: "Text Diff — File Converter",
+  title: "Text Diff",
   description: "Compare two blocks of text line by line.",
 };
 

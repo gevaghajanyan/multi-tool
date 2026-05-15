@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { VideoThumb } from "@/src/components/VideoThumb";
 
 export const metadata: Metadata = {
-  title: "Video Thumbnail — Dev Tools",
+  title: "Video Thumbnail",
   description: "Extract frames from videos as PNG images.",
 };
 

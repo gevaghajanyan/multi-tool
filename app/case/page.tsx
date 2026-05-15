@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { StringCaseConverter } from "@/src/components/StringCaseConverter";
 
 export const metadata: Metadata = {
-  title: "String Case — File Converter",
+  title: "String Case",
   description: "Convert text between all common naming conventions.",
 };
 

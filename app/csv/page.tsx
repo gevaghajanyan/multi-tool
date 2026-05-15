@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { CsvConverter } from "@/src/components/CsvConverter";
 
 export const metadata: Metadata = {
-  title: "CSV ↔ JSON — File Converter",
+  title: "CSV ↔ JSON",
   description: "Convert between CSV and JSON array formats.",
 };
 

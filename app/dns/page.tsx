@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { DnsLookup } from "@/src/components/DnsLookup";
 
 export const metadata: Metadata = {
-  title: "DNS Lookup — Dev Tools",
+  title: "DNS Lookup",
   description: "Query DNS records for any domain via Cloudflare DNS-over-HTTPS.",
 };
 

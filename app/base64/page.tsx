@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Base64Tool } from "@/src/components/Base64Tool";
 
 export const metadata: Metadata = {
-  title: "Base64 — File Converter",
+  title: "Base64",
   description: "Encode and decode Base64 text and files in your browser.",
 };
 

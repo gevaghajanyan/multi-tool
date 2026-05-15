@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { LoremIpsum } from "@/src/components/LoremIpsum";
 
 export const metadata: Metadata = {
-  title: "Lorem Ipsum — File Converter",
+  title: "Lorem Ipsum",
   description: "Generate placeholder text in seconds.",
 };
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SizeConverter } from "@/src/components/SizeConverter";
 
 export const metadata: Metadata = {
-  title: "Size Converter — Dev Tools",
+  title: "Size Converter",
   description: "Convert between px, rem, em, pt, vw, vh, cm, mm, and in.",
 };
 

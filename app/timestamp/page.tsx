@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { TimestampConverter } from "@/src/components/TimestampConverter";
 
 export const metadata: Metadata = {
-  title: "Timestamp Converter — File Converter",
+  title: "Timestamp Converter",
   description: "Convert Unix timestamps and date strings across timezones.",
 };
 

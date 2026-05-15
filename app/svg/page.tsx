@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { SvgToPng } from "@/src/components/SvgToPng";
 
 export const metadata: Metadata = {
-  title: "SVG to PNG — Dev Tools",
+  title: "SVG to PNG",
   description: "Convert SVG files to PNG images directly in your browser.",
 };
 

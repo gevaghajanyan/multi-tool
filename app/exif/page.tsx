@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ExifViewer } from "@/src/components/ExifViewer";
 
 export const metadata: Metadata = {
-  title: "EXIF Viewer — Dev Tools",
+  title: "EXIF Viewer",
   description: "View photo metadata and EXIF data from images.",
 };
 

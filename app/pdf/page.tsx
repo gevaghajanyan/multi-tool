@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { PdfTools } from "@/src/components/PdfTools";
 
 export const metadata: Metadata = {
-  title: "PDF Tools — Dev Tools",
+  title: "PDF Tools",
   description: "Inspect, merge, and split PDF files in the browser.",
 };
 

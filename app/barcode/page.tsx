@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BarcodeGenerator } from "@/src/components/BarcodeGenerator";
 
 export const metadata: Metadata = {
-  title: "Barcode Generator — Dev Tools",
+  title: "Barcode Generator",
   description: "Generate barcodes and QR codes in the browser.",
 };
 
