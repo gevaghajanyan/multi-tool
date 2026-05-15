@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { diffLines } from "diff";
 import type { Change } from "diff";
 import { load as yamlLoad, dump as yamlDump } from "js-yaml";
@@ -46,6 +46,17 @@ export function JsonFormatter() {
   const [copied, setCopied] = useState(false);
   const [viewRaw, setViewRaw] = useState(false);
   const [maximized, setMaximized] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMaximized(false);
+        setDiffMaximized(false);
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
 
   // Diff mode
   const [leftInput, setLeftInput] = useState("");

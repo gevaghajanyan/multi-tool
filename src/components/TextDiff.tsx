@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { diffLines, type Change } from "diff";
 
 type Row = { id: string; ln: number | null; rn: number | null; type: "add" | "del" | "ctx"; text: string };
@@ -64,6 +64,14 @@ export function TextDiff() {
   const [left, setLeft] = useState("");
   const [right, setRight] = useState("");
   const [maximized, setMaximized] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMaximized(false);
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, []);
 
   const { rows, stats } = useMemo(() => {
     if (!left && !right) return { rows: [], stats: null };

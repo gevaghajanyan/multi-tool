@@ -260,6 +260,12 @@ export const TOOL_GROUPS: ToolGroup[] = [
     group: "Network",
     items: [
       {
+        href: "/http",
+        label: "HTTP Client",
+        description: "Send HTTP requests and inspect responses — like Postman in the browser",
+        keywords: ["http", "https", "request", "response", "api", "rest", "get", "post", "put", "patch", "delete", "headers", "body", "json", "form", "fetch", "curl", "postman", "insomnia", "client", "endpoint", "status", "cors"],
+      },
+      {
         href: "/ip",
         label: "IP Info",
         description: "Look up IP geolocation, ISP, ASN and timezone",

@@ -15,12 +15,23 @@ function Primitive({ value }: { value: unknown }) {
 
 interface NodeProps {
   value: unknown;
-  label?: string;
+  propKey?: string;
   comma?: boolean;
   depth: number;
 }
 
-function Node({ value, label, comma = false, depth }: NodeProps) {
+function KeyLabel({ propKey }: { propKey: string }) {
+  return (
+    <span className="mr-1 shrink-0">
+      <span className="text-zinc-500">&quot;</span>
+      <span className="text-violet-400">{propKey}</span>
+      <span className="text-zinc-500">&quot;</span>
+      <span className="text-zinc-500">: </span>
+    </span>
+  );
+}
+
+function Node({ value, propKey, comma = false, depth }: NodeProps) {
   const isArr = Array.isArray(value);
   const isObj = typeof value === "object" && value !== null && !isArr;
   const isComplex = isArr || isObj;
@@ -29,10 +40,8 @@ function Node({ value, label, comma = false, depth }: NodeProps) {
 
   if (!isComplex) {
     return (
-      <div className="flex min-w-0 items-baseline gap-1 leading-6">
-        {label && (
-          <span className="shrink-0 text-zinc-300">{label}</span>
-        )}
+      <div className="flex min-w-0 items-baseline leading-6">
+        {propKey !== undefined && <KeyLabel propKey={propKey} />}
         <Primitive value={value} />
         {comma && <span className="text-zinc-600">,</span>}
       </div>
@@ -51,12 +60,9 @@ function Node({ value, label, comma = false, depth }: NodeProps) {
 
   if (entries.length === 0) {
     return (
-      <div className="flex items-baseline gap-1 leading-6">
-        {label && <span className="shrink-0 text-zinc-300">{label}</span>}
-        <span className="text-zinc-500">
-          {openB}
-          {closeB}
-        </span>
+      <div className="flex items-baseline leading-6">
+        {propKey !== undefined && <KeyLabel propKey={propKey} />}
+        <span className="text-zinc-500">{openB}{closeB}</span>
         {comma && <span className="text-zinc-600">,</span>}
       </div>
     );
@@ -65,9 +71,7 @@ function Node({ value, label, comma = false, depth }: NodeProps) {
   return (
     <div>
       <div className="flex items-center leading-6">
-        {label && (
-          <span className="mr-1 shrink-0 text-zinc-300">{label}</span>
-        )}
+        {propKey !== undefined && <KeyLabel propKey={propKey} />}
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -98,7 +102,7 @@ function Node({ value, label, comma = false, depth }: NodeProps) {
               <Node
                 key={k}
                 value={v}
-                label={isArr ? undefined : `"${k}":`}
+                propKey={isArr ? undefined : k}
                 depth={depth + 1}
                 comma={i < entries.length - 1}
               />
