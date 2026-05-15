@@ -36,13 +36,19 @@ export const TOOL_GROUPS: ToolGroup[] = [
         href: "/resize",
         label: "Image Resize",
         description: "Resize images locally — nothing is uploaded",
-        keywords: ["image", "resize", "scale", "width", "height", "png", "jpeg", "jpg", "webp", "compress", "crop", "dimensions", "photo", "picture", "thumbnail", "downscale", "upscale", "aspect ratio"],
+        keywords: ["image", "resize", "scale", "width", "height", "png", "jpeg", "jpg", "webp", "compress", "crop", "cut", "trim", "dimensions", "photo", "picture", "thumbnail", "downscale", "upscale", "aspect ratio", "crop image", "image crop", "image cutter", "image trimmer"],
       },
       {
         href: "/chmod",
         label: "Chmod Calculator",
         description: "Build Unix file permissions visually or type an octal value",
         keywords: ["chmod", "permissions", "unix", "linux", "octal", "file permissions", "rwx", "setuid", "setgid", "sticky", "owner", "group", "755", "644", "777", "symbolic", "mode", "access"],
+      },
+      {
+        href: "/barcode",
+        label: "Barcode Generator",
+        description: "Generate 1D & 2D barcodes — Code 128, EAN, QR, Data Matrix",
+        keywords: ["barcode", "code128", "ean", "ean13", "ean8", "upc", "qr", "datamatrix", "pdf417", "aztec", "generate", "scan", "1d", "2d", "bwip"],
       },
     ],
   },
@@ -92,9 +98,9 @@ export const TOOL_GROUPS: ToolGroup[] = [
       },
       {
         href: "/uuid",
-        label: "UUID Generator",
-        description: "Generate v4 UUIDs",
-        keywords: ["uuid", "guid", "unique id", "id", "generate", "random", "v4", "identifier", "ulid"],
+        label: "UUID / ULID",
+        description: "Generate UUID v4 and ULID unique identifiers",
+        keywords: ["uuid", "ulid", "guid", "unique id", "id", "generate", "random", "v4", "identifier", "sortable", "monotonic"],
       },
     ],
   },
@@ -149,6 +155,12 @@ export const TOOL_GROUPS: ToolGroup[] = [
         description: "Convert px, rem, em, vw, pt, cm, mm and more",
         keywords: ["size", "units", "px", "rem", "em", "pixel", "pixels", "pt", "pt to px", "px to rem", "rem to px", "em to px", "vw", "vh", "cm", "mm", "inch", "convert", "css units", "font size", "viewport", "responsive", "typography"],
       },
+      {
+        href: "/number",
+        label: "Number Formatter",
+        description: "Format numbers with locale, currency, units & notation",
+        keywords: ["number", "format", "locale", "currency", "intl", "decimal", "percent", "compact", "scientific", "notation", "i18n", "l10n", "thousands", "separator", "usd", "eur", "gbp"],
+      },
     ],
   },
   {
@@ -189,6 +201,75 @@ export const TOOL_GROUPS: ToolGroup[] = [
         label: "Lorem Ipsum",
         description: "Generate placeholder Lorem Ipsum text",
         keywords: ["lorem", "ipsum", "placeholder", "text", "dummy", "generate", "fake", "content", "filler", "paragraphs", "words", "sentences"],
+      },
+      {
+        href: "/md-pdf",
+        label: "Markdown → PDF",
+        description: "Convert Markdown to a downloadable PDF",
+        keywords: ["markdown", "pdf", "convert", "export", "download", "document", "a4", "letter", "jspdf", "html", "render", "print"],
+      },
+      {
+        href: "/svg",
+        label: "SVG → PNG",
+        description: "Convert SVG to PNG with custom size and scale",
+        keywords: ["svg", "png", "convert", "rasterize", "export", "download", "vector", "image", "scale", "2x", "retina", "transparent", "canvas"],
+      },
+    ],
+  },
+  {
+    group: "Files & Media",
+    items: [
+      {
+        href: "/exif",
+        label: "EXIF Viewer",
+        description: "View photo metadata — camera settings, GPS, dates",
+        keywords: ["exif", "metadata", "photo", "image", "camera", "gps", "location", "iphone", "jpeg", "raw", "tiff", "heic", "iptc", "xmp", "focal length", "aperture", "iso", "shutter"],
+      },
+      {
+        href: "/zip",
+        label: "ZIP Inspector",
+        description: "List and extract files from ZIP archives",
+        keywords: ["zip", "archive", "extract", "unzip", "inspect", "list", "files", "compress", "decompress", "fflate", "tar", "contents", "size"],
+      },
+      {
+        href: "/pdf",
+        label: "PDF Tools",
+        description: "Inspect, merge & split PDF files",
+        keywords: ["pdf", "inspect", "merge", "join", "split", "combine", "extract", "metadata", "pages", "author", "title", "creator", "document", "page size", "a4", "pdf-lib", "joiner", "splitter", "inspector"],
+      },
+      {
+        href: "/video-thumb",
+        label: "Video Thumbnail",
+        description: "Extract frames from video files as PNG images",
+        keywords: ["video", "thumbnail", "frame", "extract", "screenshot", "capture", "mp4", "webm", "mov", "avi", "mkv", "png", "timestamp", "seek"],
+      },
+    ],
+  },
+  {
+    group: "Database",
+    items: [
+      {
+        href: "/sqlite",
+        label: "SQLite Playground",
+        description: "Run SQL queries in-browser with a WASM SQLite database",
+        keywords: ["sqlite", "sql", "database", "query", "playground", "wasm", "in-memory", "select", "insert", "create", "table", "schema", "db", "browser", "sql.js"],
+      },
+    ],
+  },
+  {
+    group: "Network",
+    items: [
+      {
+        href: "/ip",
+        label: "IP Info",
+        description: "Look up IP geolocation, ISP, ASN and timezone",
+        keywords: ["ip", "ip address", "geolocation", "location", "isp", "asn", "autonomous system", "timezone", "country", "city", "lookup", "myip", "whatismyip"],
+      },
+      {
+        href: "/dns",
+        label: "DNS Lookup",
+        description: "Query DNS records via Cloudflare DNS-over-HTTPS",
+        keywords: ["dns", "lookup", "a", "aaaa", "mx", "cname", "txt", "ns", "soa", "ptr", "caa", "record", "domain", "nameserver", "doh", "cloudflare", "resolve", "hostname"],
       },
     ],
   },

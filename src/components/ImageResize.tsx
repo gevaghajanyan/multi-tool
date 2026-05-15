@@ -13,8 +13,8 @@ const FORMAT_OPTS: { value: OutputFormat; label: string; ext: string }[] = [
 
 const SCALE_PRESETS = [25, 50, 75, 100] as const;
 const MAX_PREVIEW   = 480; // max display dimension in px
-const HR            = 5;   // handle visual radius
-const HIT           = 10;  // handle hit-area radius
+const HR            = 6;   // handle visual radius
+const HIT           = 16;  // handle hit-area radius (larger for touch)
 
 interface ImageInfo { file: File; src: string; origW: number; origH: number }
 interface CropRect  { x: number; y: number; w: number; h: number } // image-pixel space
@@ -118,30 +118,39 @@ export function ImageResize() {
   }, [cropMode, crop.w, crop.h]);
 
   // ── Crop drag ──────────────────────────────────────────────────────────────
-  function startCropDrag(e: React.MouseEvent, handle: DragHandle) {
-    e.preventDefault();
+  function initDrag(clientX: number, clientY: number, handle: DragHandle) {
     if (!img || !svgRef.current) return;
     const r = svgRef.current.getBoundingClientRect();
     dragRef.current = {
       handle,
-      startMX: e.clientX, startMY: e.clientY,
-      svgLeft: r.left,   svgTop:  r.top,
-      svgW:    r.width,  svgH:    r.height,
+      startMX: clientX, startMY: clientY,
+      svgLeft: r.left,  svgTop:  r.top,
+      svgW:    r.width, svgH:    r.height,
       startCrop: { ...crop },
-      imgW: img.origW,   imgH: img.origH,
+      imgW: img.origW,  imgH: img.origH,
     };
+  }
+
+  function startCropDrag(e: React.MouseEvent, handle: DragHandle) {
+    e.preventDefault();
+    initDrag(e.clientX, e.clientY, handle);
+  }
+
+  function startCropDragTouch(e: React.TouchEvent, handle: DragHandle) {
+    e.preventDefault();
+    const t = e.touches[0];
+    if (t) initDrag(t.clientX, t.clientY, handle);
   }
 
   useEffect(() => {
     if (!cropMode) return;
 
-    function onMove(e: MouseEvent) {
+    function applyMove(clientX: number, clientY: number) {
       const d = dragRef.current;
       if (!d) return;
 
-      // Delta in image-pixel space
-      const dx = ((e.clientX - d.startMX) / d.svgW) * d.imgW;
-      const dy = ((e.clientY - d.startMY) / d.svgH) * d.imgH;
+      const dx = ((clientX - d.startMX) / d.svgW) * d.imgW;
+      const dy = ((clientY - d.startMY) / d.svgH) * d.imgH;
       const MIN = 10;
       let { x, y, w, h } = d.startCrop;
 
@@ -168,13 +177,19 @@ export function ImageResize() {
       setCrop({ x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) });
     }
 
-    function onUp() { dragRef.current = null; }
+    function onMouseMove(e: MouseEvent)  { applyMove(e.clientX, e.clientY); }
+    function onTouchMove(e: TouchEvent)  { e.preventDefault(); const t = e.touches[0]; if (t) applyMove(t.clientX, t.clientY); }
+    function onUp()                      { dragRef.current = null; }
 
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup",   onUp);
+    window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend",  onUp);
     return () => {
-      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup",   onUp);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend",  onUp);
     };
   }, [cropMode]);
 
@@ -362,11 +377,14 @@ export function ImageResize() {
                     {/* Move handle (transparent overlay, below resize handles) */}
                     <rect x={cX} y={cY} width={cW} height={cH}
                       fill="transparent" style={{ cursor: "move" }}
-                      onMouseDown={(e) => startCropDrag(e, "move")} />
+                      onMouseDown={(e) => startCropDrag(e, "move")}
+                      onTouchStart={(e) => startCropDragTouch(e, "move")} />
 
                     {/* Resize handles */}
                     {handles.map(({ id, x, y, cursor }) => (
-                      <g key={id} style={{ cursor }} onMouseDown={(e) => startCropDrag(e, id)}>
+                      <g key={id} style={{ cursor }}
+                        onMouseDown={(e) => startCropDrag(e, id)}
+                        onTouchStart={(e) => startCropDragTouch(e, id)}>
                         <circle cx={x} cy={y} r={HIT} fill="transparent" />
                         <circle cx={x} cy={y} r={HR}
                           fill="white" stroke="rgba(0,0,0,0.35)" strokeWidth="0.75" />

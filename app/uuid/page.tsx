@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { UuidGenerator } from "@/src/components/UuidGenerator";
 
 export const metadata: Metadata = {
-  title: "UUID Generator — File Converter",
-  description: "Generate version 4 UUIDs.",
+  title: "UUID / ULID Generator — Dev Tools",
+  description: "Generate UUID v4 and ULID unique identifiers.",
 };
 
 export default function UuidPage() {
