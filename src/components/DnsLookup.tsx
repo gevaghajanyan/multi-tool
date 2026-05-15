@@ -196,12 +196,30 @@ export function DnsLookup() {
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wide">{r.type}</span>
                   {!r.error && rcodeBadge(r.response.Status)}
-                  {r.error && <span className="font-mono text-xs text-red-400">{r.error}</span>}
                 </div>
-                {!r.error && (r.response.Answer ?? r.response.Authority ?? []).length === 0 && r.response.Status === 0 && (
+                {r.error ? (
+                  <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-red-400">Request failed</p>
+                      <p className="mt-0.5 font-mono text-xs text-red-400/70">{r.error}</p>
+                    </div>
+                    {results.length === 1 && (
+                      <button
+                        type="button"
+                        onClick={() => lookup()}
+                        className="shrink-0 rounded-lg border border-red-500/30 px-3 py-1 text-xs text-red-400 transition-colors hover:bg-red-500/20"
+                      >
+                        Retry
+                      </button>
+                    )}
+                  </div>
+                ) : (r.response.Answer ?? r.response.Authority ?? []).length === 0 && r.response.Status === 0 ? (
                   <p className="text-xs text-zinc-500 pl-1">No records found.</p>
-                )}
-                {!r.error && (r.response.Answer ?? r.response.Authority ?? []).length > 0 && (
+                ) : (r.response.Answer ?? r.response.Authority ?? []).length > 0 ? (
                   <div className="overflow-x-auto rounded-xl border border-zinc-800">
                     <table className="w-full text-sm">
                       <thead>
@@ -224,14 +242,10 @@ export function DnsLookup() {
                       </tbody>
                     </table>
                   </div>
-                )}
+                ) : null}
               </div>
             ))}
           </div>
-        )}
-
-        {answers.filter((a) => a.isError).length === 0 && !loading && results.length > 0 && answers.length === 0 && (
-          <p className="text-xs text-zinc-500">No records returned.</p>
         )}
 
         {history.length > 0 && (

@@ -35,6 +35,14 @@ export function IpInfo() {
   const [lookupData, setLookupData] = useState<IpData | null>(null);
   const [lookupError, setLookupError] = useState("");
 
+  function friendlyError(msg: string): string {
+    if (msg.includes("429")) return "Rate limited — try again in a moment";
+    if (msg.includes("404")) return "IP address not found";
+    if (msg.includes("fetch") || msg.includes("NetworkError") || msg.includes("Failed to fetch"))
+      return "Network error — check your connection";
+    return msg;
+  }
+
   async function fetchIp(url: string, setResult: (d: IpData) => void, setErr: (e: string) => void, setLoad: (l: boolean) => void) {
     setLoad(true);
     setErr("");
@@ -45,7 +53,7 @@ export function IpInfo() {
       if (json.error) throw new Error(json.reason || "Request failed");
       setResult(json as IpData);
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed to fetch IP info");
+      setErr(friendlyError(e instanceof Error ? e.message : "Failed to fetch IP info"));
     } finally {
       setLoad(false);
     }
@@ -66,8 +74,10 @@ export function IpInfo() {
     fetchIp(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, setLookupData, setLookupError, setLookupLoading);
   }
 
-  const displayData = lookupData ?? data;
-  const displayLoading = lookupData ? false : loading;
+  const hasLookup = !!lookupData || !!lookupError;
+  const displayData = hasLookup ? lookupData : data;
+  const displayLoading = hasLookup ? lookupLoading : loading;
+  const displayError = hasLookup ? lookupError : error;
 
   return (
     <div className="w-full max-w-xl">
@@ -87,8 +97,6 @@ export function IpInfo() {
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-700 border-t-amber-400" />
                 <span className="text-sm text-zinc-500">Fetching…</span>
               </div>
-            ) : error ? (
-              <p className="mt-1 font-mono text-xs text-red-400">{error}</p>
             ) : data ? (
               <p className="mt-1 font-mono text-2xl font-bold text-amber-400">{data.ip}</p>
             ) : null}
@@ -128,8 +136,6 @@ export function IpInfo() {
           </button>
         </div>
 
-        {lookupError && <p className="font-mono text-xs text-red-400">{lookupError}</p>}
-
         {lookupData && (
           <div className="flex items-center gap-2 rounded-lg border border-amber-400/50 bg-amber-400/10 px-3 py-2">
             <span className="text-xs text-zinc-400">Showing results for</span>
@@ -141,6 +147,28 @@ export function IpInfo() {
             >
               Clear
             </button>
+          </div>
+        )}
+
+        {displayError && (
+          <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <svg className="mt-0.5 h-4 w-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 15.75h.007v.008H12v-.008z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-400">Lookup failed</p>
+              <p className="mt-0.5 text-xs text-red-400/70">{displayError}</p>
+            </div>
+            {!hasLookup && (
+              <button
+                type="button"
+                onClick={fetchMyIp}
+                className="shrink-0 rounded-lg border border-red-500/30 px-3 py-1 text-xs text-red-400 transition-colors hover:bg-red-500/20"
+              >
+                Retry
+              </button>
+            )}
           </div>
         )}
 
