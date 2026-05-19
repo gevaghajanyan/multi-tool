@@ -28,9 +28,6 @@
     "sql.js": "^1.14.1",
     "ulid": "^3.0.2"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["core-js", "sharp", "unrs-resolver"]
-  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/diff": "^8.0.0",
