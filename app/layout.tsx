@@ -71,6 +71,11 @@ export default function RootLayout({
             __html: `try{var p=JSON.parse(localStorage.getItem('devtools-settings-v2')||'{}');if(p.theme==='light')document.documentElement.classList.remove('dark');}catch(e){}`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){if(!window.crossOriginIsolated&&'serviceWorker'in navigator){navigator.serviceWorker.register('${process.env.NEXT_PUBLIC_BASE_PATH??''}/coi-serviceworker.js').then(function(r){if(!r.active)window.location.reload();})}})();`,
+          }}
+        />
         <SettingsProvider>
           <AccentStyler />
           <Nav />
