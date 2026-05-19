@@ -1,227 +1,142 @@
-# File Converter App — Claude Code Prompt
+# Dev Tools
 
-## Stack
-- React 18 + TypeScript (strict mode)
-- Tailwind CSS v4
-- FFmpeg.wasm (`@ffmpeg/ffmpeg` + `@ffmpeg/util`) for video/audio
-- Canvas API for image conversion
-- Vite as bundler
+A collection of 54 browser-based developer tools. Everything runs locally — no data leaves your tab.
+
+**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS 4
 
 ---
 
-## Features
+## Getting started
 
-### 3 Converter Types
-| Type  | Input formats | Output formats |
-|-------|--------------|----------------|
-| Video | MP4, WebM, MKV, MOV, AVI, FLV | MP4, WebM, MKV, MOV, AVI |
-| Audio | MP3, WAV, OGG, FLAC, AAC, M4A | MP3, WAV, OGG, FLAC, AAC |
-| Image | JPG, PNG, WebP, GIF, BMP, TIFF | JPG, PNG, WebP, GIF, BMP |
-
-### UX Flow
-1. Tab switcher — Video / Audio / Image
-2. Drag-and-drop zone + click-to-browse
-3. Selected file shows name, size, format badge
-4. Output format grid — disable button matching input format
-5. Convert button — disabled until file + format selected
-6. Progress bar with percentage parsed from FFmpeg logs
-7. Log panel showing FFmpeg stderr in real time
-8. On complete — download button with correct output filename + reset
-
----
-
-## Types (`src/types/converter.ts`)
-
-```ts
-type ConverterType = 'video' | 'audio' | 'image'
-
-interface ConvertJob {
-  id: string
-  file: File
-  inputFormat: string
-  outputFormat: string
-  type: ConverterType
-  status: 'idle' | 'loading' | 'converting' | 'done' | 'error'
-  progress: number
-  logLines: string[]
-  outputUrl?: string
-  outputSize?: number
-  error?: string
-}
+```bash
+npm install
+npm run dev
 ```
 
 ---
 
-## Hooks
+## Tools
 
-### `useFFmpeg.ts`
-- Singleton FFmpeg instance — load once on app mount, never re-initialize
-- Load using `toBlobURL` from `@ffmpeg/util` pointing to CDN assets
-- Expose `loaded: boolean` and `ffmpeg` ref
-- Show global loading state until WASM is ready
+### Core
+| Tool | Route | Description |
+|------|-------|-------------|
+| File Converter | `/files` | Convert video, audio & images via FFmpeg.wasm |
+| JSON Tools | `/json` | Format, validate, minify & diff JSON |
+| QR Code Generator | `/qr` | Generate QR codes for URLs, text & more |
+| Image Resize | `/resize` | Resize images locally |
+| Chmod Calculator | `/chmod` | Build Unix file permissions visually |
+| Barcode Generator | `/barcode` | Generate 1D & 2D barcodes (Code 128, EAN, QR, Data Matrix) |
 
-### `useConverter.ts`
-- Accepts `type: ConverterType`
-- Manages full `ConvertJob` state
-- Exposes `convert(file, outputFormat)`, `reset()`
-- For video/audio: uses FFmpeg (`writeFile` → `exec` → `readFile`)
-- For image: uses Canvas API (`createImageBitmap` → draw → `toBlob`)
+### Encoding
+| Tool | Route | Description |
+|------|-------|-------------|
+| Base64 | `/base64` | Encode & decode Base64 strings and files |
+| HTML Entities | `/html` | Encode & decode HTML entities |
+| Hash Generator | `/hash` | SHA-1, SHA-256, SHA-384, SHA-512 hashes |
 
-### `useFileDrop.ts`
-- Handles `dragenter`, `dragover`, `dragleave`, `drop` events
-- Returns `dragOver: boolean` and calls `onFile(file)` on valid drop
+### Auth & Tokens
+| Tool | Route | Description |
+|------|-------|-------------|
+| JWT Decoder | `/jwt` | Decode & inspect JWT tokens |
+| JWT Builder | `/jwt-builder` | Sign & create JWT tokens |
+| Password Generator | `/password` | Generate secure random passwords |
+| UUID / ULID | `/uuid` | Generate UUID v4 and ULID identifiers |
+| HMAC Generator | `/hmac` | Generate HMAC signatures (SHA-256/384/512) |
+| AES Encrypt/Decrypt | `/aes` | AES-GCM 256-bit encryption with password |
+| RSA Key Pair | `/rsa` | Generate RSA key pairs (2048 / 4096-bit) |
+
+### Data
+| Tool | Route | Description |
+|------|-------|-------------|
+| JSON → TypeScript | `/json-to-ts` | Generate TypeScript interfaces from JSON |
+| YAML ↔ JSON | `/yaml` | Convert between YAML and JSON |
+| CSV ↔ JSON | `/csv` | Convert between CSV and JSON |
+| URL Parser | `/url` | Parse, encode & decode URLs |
+| Timestamp | `/timestamp` | Convert Unix timestamps to dates and back |
+| Base Converter | `/base` | Convert between decimal, hex, binary & octal |
+| Color Converter | `/color` | Convert between HEX, RGB, HSL & more |
+| Size Converter | `/size` | Convert px, rem, em, vw, pt, cm and more |
+| Number Formatter | `/number` | Format numbers with locale, currency & notation |
+| XML Formatter | `/xml` | Format, minify & validate XML |
+| SQL Formatter | `/sql` | Format & minify SQL queries |
+
+### Text & Code
+| Tool | Route | Description |
+|------|-------|-------------|
+| Regex Tester | `/regex` | Test regular expressions with live highlighting |
+| Text Diff | `/diff` | Compare two texts and highlight differences |
+| Cron Parser | `/cron` | Parse & explain cron expressions |
+| String Case | `/case` | Convert between camelCase, snake_case, PascalCase & more |
+| Markdown Preview | `/markdown` | Live Markdown preview |
+| Lorem Ipsum | `/lorem` | Generate placeholder text |
+| Markdown → PDF | `/md-pdf` | Convert Markdown to a downloadable PDF |
+| SVG → PNG | `/svg` | Convert SVG to PNG |
+| Text Statistics | `/text-stats` | Word count, reading time & character breakdown |
+| Slug Generator | `/slug` | Convert text to a URL-friendly slug |
+
+### Files & Media
+| Tool | Route | Description |
+|------|-------|-------------|
+| EXIF Viewer | `/exif` | View photo metadata — camera settings, GPS, dates |
+| ZIP Inspector | `/zip` | List and extract files from ZIP archives |
+| PDF Tools | `/pdf` | Inspect, merge & split PDF files |
+| Video Thumbnail | `/video-thumb` | Extract frames from video files as PNG |
+
+### Database
+| Tool | Route | Description |
+|------|-------|-------------|
+| SQLite Playground | `/sqlite` | Run SQL queries in-browser via WASM SQLite |
+
+### Network
+| Tool | Route | Description |
+|------|-------|-------------|
+| HTTP Client | `/http` | Send HTTP requests and inspect responses |
+| IP Info | `/ip` | Look up IP geolocation, ISP & ASN |
+| DNS Lookup | `/dns` | Query DNS records via Cloudflare DoH |
+| Subnet Calculator | `/subnet` | CIDR subnet math — mask, hosts, broadcast |
+| cURL → Fetch | `/curl` | Convert curl commands to JavaScript fetch() |
 
 ---
 
-## Components
+## Project structure
 
 ```
-src/components/
-  ConverterTabs.tsx   — tab navigation (Video / Audio / Image)
-  DropZone.tsx        — upload area, accepts type + dragOver props
-  FileInfo.tsx        — file name, size, format badge, clear button
-  FormatGrid.tsx      — clickable output format buttons
-  ConvertButton.tsx   — main CTA, loading + disabled states
-  ProgressPanel.tsx   — progress bar + scrollable log output
-  ResultPanel.tsx     — download button + reset
-```
-
----
-
-## Utilities
-
-### `src/utils/formats.ts`
-```ts
-export const FORMATS: Record<ConverterType, { input: string[]; output: string[] }> = {
-  video: { input: ['mp4','webm','mkv','mov','avi','flv'], output: ['mp4','webm','mkv','mov','avi'] },
-  audio: { input: ['mp3','wav','ogg','flac','aac','m4a'], output: ['mp3','wav','ogg','flac','aac'] },
-  image: { input: ['jpg','png','webp','gif','bmp','tiff'], output: ['jpg','png','webp','gif','bmp'] },
-}
-```
-
-### `src/utils/parseProgress.ts`
-- Parse FFmpeg log lines matching `time=HH:MM:SS.ms`
-- Compare against total duration to produce a 0–100 number
-- Export `parseProgress(log: string, duration: number): number | null`
-
-### `src/utils/formatBytes.ts`
-- Export `formatBytes(bytes: number): string` → e.g. `"4.2 MB"`
-
----
-
-## File Structure
-
-```
+app/                    # Next.js routes (one directory per tool)
 src/
-  components/
-    ConverterTabs.tsx
-    DropZone.tsx
-    FileInfo.tsx
-    FormatGrid.tsx
-    ConvertButton.tsx
-    ProgressPanel.tsx
-    ResultPanel.tsx
-  hooks/
-    useFFmpeg.ts
-    useConverter.ts
-    useFileDrop.ts
+  components/           # Tool UI components
+  hooks/                # useFFmpeg, useConverter, useFileDrop
+  lib/
+    tools.ts            # Tool registry (labels, descriptions, keywords)
   types/
-    converter.ts
   utils/
-    formats.ts
-    parseProgress.ts
-    formatBytes.ts
-  App.tsx
-  main.tsx
-vite.config.ts
+public/
+next.config.ts
 ```
 
 ---
 
-## FFmpeg Integration
+## Key dependencies
 
-```ts
-// Load
-const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/esm'
-await ffmpeg.load({
-  coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-  wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-})
+| Package | Purpose |
+|---------|---------|
+| `@ffmpeg/ffmpeg` | Video & audio conversion via WASM |
+| `pdf-lib` | PDF merge, split & inspection |
+| `sql.js` | SQLite in the browser via WASM |
+| `js-yaml` | YAML parsing |
+| `marked` | Markdown rendering |
+| `jspdf` | Markdown → PDF export |
+| `diff` | Text diffing |
+| `fflate` | ZIP inspection |
+| `exifr` | EXIF metadata extraction |
+| `bwip-js` | Barcode generation |
+| `qrcode` | QR code generation |
+| `ulid` | ULID generation |
 
-// Convert
-await ffmpeg.writeFile(`input.${inputFmt}`, await fetchFile(file))
-await ffmpeg.exec(['-i', `input.${inputFmt}`, `output.${outputFmt}`])
-const data = await ffmpeg.readFile(`output.${outputFmt}`)
-const url = URL.createObjectURL(new Blob([data.buffer]))
-
-// Progress listener
-ffmpeg.on('log', ({ message }) => {
-  appendLog(message)
-  const progress = parseProgress(message, duration)
-  if (progress !== null) setProgress(progress)
-})
-```
+All crypto tools (HMAC, AES, RSA, Hash) use the browser's native `crypto.subtle` API — no external crypto library required.
 
 ---
 
-## Image Conversion (Canvas)
+## Notes
 
-```ts
-const bitmap = await createImageBitmap(file)
-const canvas = document.createElement('canvas')
-canvas.width = bitmap.width
-canvas.height = bitmap.height
-canvas.getContext('2d')!.drawImage(bitmap, 0, 0)
-
-const mimeMap: Record<string, string> = {
-  jpg: 'image/jpeg', png: 'image/png',
-  webp: 'image/webp', gif: 'image/gif', bmp: 'image/bmp',
-}
-canvas.toBlob(blob => {
-  const url = URL.createObjectURL(blob!)
-  // set as output
-}, mimeMap[outputFormat], 0.92)
-```
-
----
-
-## Vite Config (`vite.config.ts`)
-
-```ts
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin',
-      'Cross-Origin-Embedder-Policy': 'require-corp',
-    },
-  },
-  optimizeDeps: {
-    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
-  },
-})
-```
-
-> **Required:** FFmpeg.wasm uses `SharedArrayBuffer` which requires `crossOriginIsolated`.
-> These headers must also be set in production (Vercel → `vercel.json`, Netlify → `_headers`).
-
----
-
-## Tailwind Notes
-- Base: `bg-zinc-950` dark theme
-- Accent: `amber-400` / `amber-500` for active states, progress, buttons
-- Borders: `border-zinc-800` default, `border-amber-400` on focus/active
-- No external component libraries — Tailwind utilities only
-- All hover/focus states use `transition-colors duration-150`
-
----
-
-## Constraints & Reminders
-- FFmpeg singleton — load once in `useFFmpeg`, share via context or module-level ref
-- Revoke all `URL.createObjectURL` blobs on component unmount
-- Clean up FFmpeg virtual FS files after each conversion (`ffmpeg.deleteFile(...)`)
-- Disable Convert button while any conversion is in progress
-- Derive input format from `file.name.split('.').pop()` normalized to lowercase
+- FFmpeg.wasm requires `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers (configured in `next.config.ts`).
+- The tool registry (`src/lib/tools.ts`) powers both the homepage grid and the command-palette search.
