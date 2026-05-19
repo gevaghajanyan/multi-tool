@@ -102,6 +102,24 @@ export const TOOL_GROUPS: ToolGroup[] = [
         description: "Generate UUID v4 and ULID unique identifiers",
         keywords: ["uuid", "ulid", "guid", "unique id", "id", "generate", "random", "v4", "identifier", "sortable", "monotonic"],
       },
+      {
+        href: "/hmac",
+        label: "HMAC Generator",
+        description: "Generate HMAC-SHA256/384/512 signatures",
+        keywords: ["hmac", "sha256", "sha384", "sha512", "hash", "mac", "signature", "secret", "key", "sign", "verify", "crypto", "api key"],
+      },
+      {
+        href: "/aes",
+        label: "AES Encrypt / Decrypt",
+        description: "Encrypt and decrypt text with AES-GCM 256-bit",
+        keywords: ["aes", "encrypt", "decrypt", "aes-gcm", "256", "password", "symmetric", "crypto", "pbkdf2", "cipher", "secure", "secret"],
+      },
+      {
+        href: "/rsa",
+        label: "RSA Key Pair",
+        description: "Generate RSA public/private key pairs in PEM format",
+        keywords: ["rsa", "key pair", "public key", "private key", "pem", "generate", "2048", "4096", "asymmetric", "crypto", "spki", "pkcs8", "certificate", "sign", "encrypt"],
+      },
     ],
   },
   {
@@ -124,6 +142,18 @@ export const TOOL_GROUPS: ToolGroup[] = [
         label: "CSV ↔ JSON",
         description: "Convert between CSV and JSON",
         keywords: ["csv", "json", "convert", "spreadsheet", "excel", "table", "tsv", "delimiter", "rows", "columns", "import", "export", "data"],
+      },
+      {
+        href: "/xml",
+        label: "XML Formatter",
+        description: "Format, minify, and validate XML documents",
+        keywords: ["xml", "format", "minify", "validate", "prettify", "indent", "parse", "html", "markup", "soap", "rss", "atom", "config", "svg"],
+      },
+      {
+        href: "/sql",
+        label: "SQL Formatter",
+        description: "Format and minify SQL queries",
+        keywords: ["sql", "format", "minify", "prettify", "query", "select", "from", "where", "join", "indent", "keyword", "uppercase", "mysql", "postgres", "database", "ddl", "dml"],
       },
       {
         href: "/url",
@@ -166,6 +196,18 @@ export const TOOL_GROUPS: ToolGroup[] = [
   {
     group: "Text & Code",
     items: [
+      {
+        href: "/text-stats",
+        label: "Text Statistics",
+        description: "Count words, characters, sentences & reading time",
+        keywords: ["text", "stats", "statistics", "word count", "character count", "reading time", "words", "sentences", "paragraphs", "lines", "frequency", "analyze", "counter"],
+      },
+      {
+        href: "/slug",
+        label: "Slug Generator",
+        description: "Convert phrases to URL-friendly slugs",
+        keywords: ["slug", "url", "permalink", "seo", "kebab", "dash", "underscore", "normalize", "sanitize", "path", "link", "friendly", "generate"],
+      },
       {
         href: "/regex",
         label: "Regex Tester",
@@ -276,6 +318,18 @@ export const TOOL_GROUPS: ToolGroup[] = [
         label: "DNS Lookup",
         description: "Query DNS records via Cloudflare DNS-over-HTTPS",
         keywords: ["dns", "lookup", "a", "aaaa", "mx", "cname", "txt", "ns", "soa", "ptr", "caa", "record", "domain", "nameserver", "doh", "cloudflare", "resolve", "hostname"],
+      },
+      {
+        href: "/subnet",
+        label: "Subnet Calculator",
+        description: "Calculate network details from a CIDR block",
+        keywords: ["subnet", "cidr", "network", "ip", "mask", "broadcast", "host", "range", "ipv4", "netmask", "wildcard", "class a", "class b", "class c", "prefix", "routing"],
+      },
+      {
+        href: "/curl",
+        label: "cURL → Fetch",
+        description: "Convert cURL commands to JavaScript fetch() calls",
+        keywords: ["curl", "fetch", "convert", "javascript", "http", "request", "api", "headers", "body", "auth", "bearer", "basic auth", "post", "get", "json", "form"],
       },
     ],
   },
